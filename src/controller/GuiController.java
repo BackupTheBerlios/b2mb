@@ -13,12 +13,26 @@ public class GuiController{
 
     /**
      * Contructs a GuiController object
-     * @param a JTabbedPane which represents the model
      */
-    public GuiController(JTabbedPane tab){
+    public GuiController(){
+    }
+
+    /*************************************************/
+    /**
+     * Set the view
+     * @param 
+     */
+    public void setView(JTabbedPane tab){
 	this.tab = tab;
     }
 
+    /**
+     * Set the model
+     * @param 
+     */
+    // FIXME
+    public void setModel(){
+    }
     /*************************************************/
     // From VShared component
     
@@ -37,7 +51,17 @@ public class GuiController{
     public ArrayList getAllFiles(String s){
 	return ((VShared)tab.getComponentAt(4)).getAllFiles(s);
     }
-
+    
+    /**
+     * Permits to get similar name to the given name
+     * @param file name
+     * @return a list of file names
+     * @return null if nothing corresponds
+     */
+    public ArrayList searchFiles(String s){
+	return ((VShared)tab.getComponentAt(4)). searchFiles(s);
+    }
+    
     /*************************************************/
     // From VNetwork
 
