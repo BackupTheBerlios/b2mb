@@ -69,7 +69,7 @@ public class UDPImageDatagram
 	//...then order in the little-endian way.
 	fragment_array = ByteBuffer.wrap(fragment_array).order(ByteOrder.LITTLE_ENDIAN).array();
 	for(i=0; i<fragment.length; i++)
-	    datagram[i+shift] = fragment[i];
+	    datagram[i+shift] = fragment_array[i];
 	return datagram;
     }
     
@@ -130,3 +130,6 @@ public class UDPImageDatagram
     public static int getFragmentSize(byte [] datagram)
     { return datagram.length - 18; }
 }
+
+
+
