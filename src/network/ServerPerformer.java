@@ -1,16 +1,42 @@
 package network;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.Socket;
-import java.io.PrintStream;
+import utils.NetworkUtils;
+import parser.TCPDescriptorHeader;
+import parser.PayloadDescriptor;
+
 
 /**
  * Defines all the server's actions.
  */
 public class ServerPerformer implements ServerPerformerInterface
 {
+    private NetworkQueryListener listener;
+    
+    
+    public ServerPerformer(NetworkQueryListener listener)
+    { this.listener = listener; }
+    
+    
+    /**
+     * Dispatches the processing of the query depending on the nature of the query.
+     * @param query the query that was sent to this server.
+     */
+    private void dispatch(byte [] query, Socket socket)
+    {
+	byte descriptor = TCPDescriptorHeader.getPayloadDescriptor(query);
+	switch(descriptor)
+	    {
+	    case(PayloadDescriptor.QUERYHIT):
+		/* Faudrait appeler l'objet intéressé par un queryhit */
+		break;
+	    default:
+		this.listener.processQuery(query, socket);
+	    }
+    }
+    
+    
     /**
      * Performs the server's actions.
      * Is destined to be used with the following classes: Server, ServerRunnable.
@@ -18,16 +44,9 @@ public class ServerPerformer implements ServerPerformerInterface
     public void perform(Socket socket)
     {
 	try{
-	    BufferedReader r = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	    String read=r.readLine();
-	    System.out.println("Ce qui a été lu:\n"+read);
-	    if(read.equals("Client: bonjour"))
-		System.out.println("Le serveur répond bonjour");
-	    else
-		System.out.println("Le serveur n'a pas compris ce qui a été dit, mais répond bonjour");
-	    PrintStream out = new PrintStream(socket.getOutputStream());
-	    out.println("Serveur: bonjour");
-	    out.flush();
+	    listener.setOK(false);
+	    while(!listener.getOK())
+		dispatch(NetworkUtils.read(socket), socket);
 	}catch(IOException ioe){ ioe.printStackTrace(); }
     }
 }

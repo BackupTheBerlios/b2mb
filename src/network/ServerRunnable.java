@@ -37,7 +37,7 @@ public class ServerRunnable implements Runnable
 	    }//...try
 	    catch(IOException ioe){ ioe.printStackTrace(); }
 	    finally{
-		try{ socket.close(); }
+		try{ socket.close(); System.out.println("La connexion a ete fermee."+System.currentTimeMillis()); }
 		catch(IOException ioe){ ioe.printStackTrace(); }
 	    }
 	}//...while
