@@ -25,6 +25,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 
 import configuration.Setup;
+import controller.GuiController;
 
 /**
  * This class represents the graphical view's main component of the application 
@@ -43,6 +44,9 @@ public class VMainComponent extends JFrame{
     private VSearch search = new VSearch();
     private VDisplay display = new VDisplay();
 
+    // Controller
+    private GuiController controller;
+    
     // TEST
     public static Setup setup;
     
@@ -62,16 +66,17 @@ public class VMainComponent extends JFrame{
 	// Menu
 	//initMenuBar();
 	
-	// Toolbar
-	initToolBar();
-	
 	// Create JTabbPane with a default tab placement of JTabbedPane.TOP
 	tabbedPane = new JTabbedPane();
 	// And add all the tabs
 	initTabs();
-
+	// Init the controller
+	controller = new GuiController(tabbedPane);
+	
+	// Toolbar
+	initToolBar();
+	
 	// Default Settings
-	// setSize(new Dimension(500, 500));
 	setSize(Toolkit.getDefaultToolkit().getScreenSize());
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -112,7 +117,7 @@ public class VMainComponent extends JFrame{
 	connect.setToolTipText("Get connected");
 	connect.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
-		    network.connect();
+		    controller.connect();
 		}
 	    });
 	toolBar.add(connect);
@@ -123,7 +128,7 @@ public class VMainComponent extends JFrame{
 	disconnect.setToolTipText("Get disconnected");
 	disconnect.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
-		    network.disconnect();
+		    controller.disconnect();
 		}
 	    });
 	toolBar.add(disconnect);
@@ -134,7 +139,7 @@ public class VMainComponent extends JFrame{
 	scan.setToolTipText("Scan the shared files' folder");
 	scan.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
-		    sharedFile.scanDirectory();
+		    controller.scanDirectory();
 		}
 	    });
 	toolBar.add(scan);
@@ -145,7 +150,7 @@ public class VMainComponent extends JFrame{
 	clear.setToolTipText("Clear the log board");
 	clear.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
-		    removeLog();
+		    controller.removeAllFromLog();
 		}
 	    });
 	toolBar.add(clear);
@@ -189,20 +194,6 @@ public class VMainComponent extends JFrame{
 	getContentPane().add(tabbedPane);
     }
 
-    /**
-     * Adds a text in the log
-     * @param string to add
-     */
-    public void add2Log(String s){
-	network.add(s);
-    }
-    
-    /**
-     * Removes all elements from the log
-     */
-    public void removeLog(){
-	network.removeAll();
-    }
     /******************************************/
     /**
      * Internal class which represents a specific MouseAdapter

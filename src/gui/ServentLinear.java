@@ -7,6 +7,8 @@ import java.io.*;
 import java.awt.image.*;
 import java.awt.geom.*; 
 import javax.imageio.*;
+import javax.imageio.stream.*;
+import java.util.*;
 
 import parser.UDPImageDatagram;
 
@@ -15,7 +17,7 @@ public class ServentLinear extends Container{
     private Thread client;
     private int width = 0, height = 0;
     
-    public ServentLinear(){
+    public ServentLinear(){ 
     }
 
     public void paint(Graphics g){
@@ -38,7 +40,7 @@ public class ServentLinear extends Container{
 			// Creation de l'image avec taille connue
 			image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 			WritableRaster raster = image.getRaster();
-		
+			
 			int raw = 0;
 			int t = 1;
 			boolean firstTime = true;
@@ -77,6 +79,17 @@ public class ServentLinear extends Container{
 	
 			byte[] buffer = new byte[2];
 			DatagramPacket packet = new  DatagramPacket(buffer, 2, InetAddress.getLocalHost(), 50000); 
+
+			File f = new File(fileName);
+			ImageInputStream input = ImageIO.createImageInputStream(f);
+			Iterator it = ImageIO.getImageReadersByFormatName("gif");
+
+			int i = 1;
+
+			ImageReader reader = (ImageReader)it.next();
+			reader.setInput(input, true);
+			System.out.println(reader.getNumImages(false));
+			System.exit(1);
 
 			BufferedImage image = ImageIO.read(new File(fileName));
 			

@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -19,7 +21,6 @@ import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-
 
 /**
  * Graphical component which represents the shared files
@@ -90,6 +91,30 @@ public class VShared extends JPanel{
 		scanDirectory(node, all[i]);
 	}
     }
+    /*******************************************************************/
+    /**
+     * Permits to get the list of files from a specified file name
+     * @param file name
+     * @return a list of file names
+     */
+    public ArrayList getAllFiles(String s){
+	ArrayList names = new ArrayList();
+	
+	Enumeration e = root.preorderEnumeration();
+	DefaultMutableTreeNode searchedNode = null;
+	DefaultMutableTreeNode node = null;
+	while(e.hasMoreElements()){
+	    node = (DefaultMutableTreeNode)e.nextElement();
+	    // Get the searched node
+	    if( ((String)node.getUserObject()).compareTo(s) == 0 )
+		searchedNode = node;
+
+	    if( (searchedNode != null) && (node != searchedNode) && node.isNodeAncestor(searchedNode) && node.isLeaf() )
+		names.add(node.getUserObject());
+	}
+	return names;
+    }
+
     /*******************************************************************/
     /**
      * Permits to clean all the childs of the root

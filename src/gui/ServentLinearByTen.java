@@ -83,11 +83,6 @@ public class ServentLinearByTen extends Container{
 	client.start();
     }
 
-    public void stopClient(){
-	image = null;
-	client.stop();
-    }
-
     public void startServer(final String fileName){
 	(new Thread(new Runnable(){
 		public void run(){
