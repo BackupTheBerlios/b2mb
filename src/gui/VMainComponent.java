@@ -126,6 +126,17 @@ public class VMainComponent extends JFrame{
 	toolBar.add(scan);
 
 	toolBar.add(new JToolBar.Separator(dim));
+
+	JButton clear = new JButton ("Clear");
+	clear.setToolTipText("Clear the log board");
+	clear.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent event){
+		    removeLog();
+		}
+	    });
+	toolBar.add(clear);
+
+	toolBar.add(new JToolBar.Separator(dim));
 	
 	JButton exit = new JButton ("Quit");
 	//exit.setIcon(new ImageIcon("Icons/Paste24.gif"));
@@ -151,7 +162,8 @@ public class VMainComponent extends JFrame{
 	VTable servent = new VTable(new String[]{"IP", "Port", "Toto"});
 	servent.addRow(new Object[] {new Integer(123), "IO", "5 mn"});
 	tabbedPane.addTab("Servents", null, servent, "Connected Servents");
-	
+
+	transfer.addListener(tabbedPane, 5);
 	tabbedPane.addTab("Transfer", null, transfer, "Transfered files");
 
 	tabbedPane.addTab("Search", null, search, "Search files");
@@ -163,6 +175,20 @@ public class VMainComponent extends JFrame{
 	getContentPane().add(tabbedPane);
     }
 
+    /**
+     * Adds a text in the log
+     * @param string to add
+     */
+    public void add2Log(String s){
+	network.add(s);
+    }
+    
+    /**
+     * Removes all elements from the log
+     */
+    public void removeLog(){
+	network.removeAll();
+    }
     /******************************************/
     /**
      * Internal class which represents a specific MouseAdapter

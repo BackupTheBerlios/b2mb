@@ -61,8 +61,14 @@ public class VNetwork extends JPanel{
     public void add(String s){
 	model.addElement(s);
     }
-
-
+    
+    /**
+     * Removes the log
+     */
+    public void removeAll(){
+	model.removeAllElements(); 
+    }
+    
     /**
      * Permits to display Connected message
      */
