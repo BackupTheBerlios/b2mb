@@ -36,8 +36,8 @@ public class VTransfer extends JPanel{
 	add(main);
 
 	// TEST
-	add2Download(new String[] {"Images/Merco.jpg", "10Ko", "10.2.2.2", "30ms", "10Ko/s", "available"});
-	add2Download(new String[] {"Images/linux.jpg", "10Ko", "10.2.2.2", "30ms", "10Ko/s", "available"});
+	add2Download(new String[] {"Merco.jpg", "10Ko", "10.2.2.2", "30ms", "10Ko/s", "available"});
+	add2Download(new String[] {"linux.jpg", "10Ko", "10.2.2.2", "30ms", "10Ko/s", "available"});
     }
     
     /**

@@ -10,6 +10,8 @@ import java.awt.event.MouseListener;
 
 import java.awt.Toolkit;
 
+import java.io.IOException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
@@ -21,6 +23,8 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar.Separator;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+
+import configuration.Setup;
 
 /**
  * This class represents the graphical view's main component of the application 
@@ -38,12 +42,22 @@ public class VMainComponent extends JFrame{
     private VTransfer transfer = new VTransfer();
     private VSearch search = new VSearch();
     private VDisplay display = new VDisplay();
+
+    // TEST
+    public static Setup setup;
     
     /**
      * Creates a VMainComponent
      */
     VMainComponent(){
 	super("B2M2 Peer to Peer");
+
+	// TEST
+	try{
+	    setup = new Setup("properties");
+	}catch(IOException e){
+	    e.printStackTrace();
+	}
 	
 	// Menu
 	//initMenuBar();

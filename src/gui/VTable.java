@@ -108,9 +108,8 @@ public class VTable extends JScrollPane{
 			if( (getSelectedRow() >= 0) && (getSelectedRow() < getRowCount()) ){
 			    tabbedPane.setSelectedIndex(index);
 			    String s = (String)getValueAt(getSelectedRow(), 0);
-			    System.out.println("Index "+s);
 			    VDisplay display = (VDisplay)tabbedPane.getComponentAt(index);
-			    display.setImage(s);
+			    display.setImage(VMainComponent.setup.getPath()+"/"+s);
 
 			}
 		    }
