@@ -12,7 +12,7 @@ public class ClientPerformer implements ClientPerformerInterface
 {
     public void perform(Socket socket)
     {
-	try{
+	//try{
 	    /*
 	      System.out.println("Le client lance un bonjour dans la toile");
 	      NetworkUtils.write(socket, "GNUTELLA CONNECT/0.4\n\n");
@@ -44,8 +44,8 @@ public class ClientPerformer implements ClientPerformerInterface
 	      System.out.println("nb de fichiers partagés: "+descr2.getNumberSharedFiles());
 	      System.out.println("nb d'octets partagés: "+descr2.getNumberSharedKo());
 	    */
-	}
+	/*}
 	catch(IOException ioe)
-	    { ioe.printStackTrace(); }
+	{ ioe.printStackTrace(); }*/
     }
 }
