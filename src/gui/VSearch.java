@@ -33,7 +33,7 @@ public class VSearch extends JPanel{
 	add(top, BorderLayout.NORTH);
 	add(bottom, BorderLayout.CENTER);
     }
-
+    
     /**************************************************************/
     /**
      * Graphical component which represents the search top component
