@@ -108,11 +108,35 @@ public class VShared extends JPanel{
 	    // Get the searched node
 	    if( ((String)node.getUserObject()).compareTo(s) == 0 )
 		searchedNode = node;
-
+	    
 	    if( (searchedNode != null) && (node != searchedNode) && node.isNodeAncestor(searchedNode) && node.isLeaf() )
 		names.add(node.getUserObject());
 	}
 	return names;
+    }
+
+    /*******************************************************************/
+    /**
+     * Permits to get similar name to the given name
+     * @param file name
+     * @return a list of file names
+     * @return null if nothing corresponds
+     */
+    public ArrayList searchFiles(String s){
+	ArrayList names = new ArrayList();
+	
+	Enumeration e = root.children();
+	
+	DefaultMutableTreeNode node = null;
+	while(e.hasMoreElements()){
+	    node = (DefaultMutableTreeNode)e.nextElement();
+	    if( ((String)node.getUserObject()).lastIndexOf(s) != -1 )
+		names.add(node.getUserObject());
+	}
+
+	if( names.size() != 0 )
+	    return names;
+	else return null;
     }
 
     /*******************************************************************/
