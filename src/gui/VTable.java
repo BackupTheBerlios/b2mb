@@ -1,3 +1,5 @@
+package fr.umlv.b2mb.gui;
+
 import java.awt.Color;
 import java.awt.Dimension;
 

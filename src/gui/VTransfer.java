@@ -1,4 +1,7 @@
+package fr.umlv.b2mb.gui;
+
 import java.awt.BorderLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -11,8 +14,8 @@ NB : Status va contenir une JProgressBar
  * Graphical component which represents the transfer main window
  */
 public class VTransfer extends JPanel{
-    private VTable upload;
-    private VTable download;
+    private VDULoad upload;
+    private VDULoad download;
     
     /**
      * @author B2MB
@@ -21,9 +24,9 @@ public class VTransfer extends JPanel{
     VTransfer(){
 	setLayout(new BorderLayout());
 	
-	// Defintion of the tables
-	upload = new VTable(new String[] {"File", "Size", "From", "Speed", "Status"});
-	download = new VTable(new String[] {"File", "Size", "From", "Speed", "Status"});
+	// Defintion of the component
+	upload = new VDULoad("Upload", new String[] {"File", "Size", "From", "Speed", "Status"});
+	download = new VDULoad("Download", new String[] {"File", "Size", "From", "Speed", "Status"});
 	
 	// Defintion of the main component
 	JSplitPane main = new JSplitPane(JSplitPane.VERTICAL_SPLIT, download, upload);
@@ -42,7 +45,7 @@ public class VTransfer extends JPanel{
      * @param objects to add
      */
     public void add2Download(Object[] o){
-	download.addRow(o);
+	download.add2table(o);
     }
 
     /**
@@ -51,9 +54,55 @@ public class VTransfer extends JPanel{
      * @param objects to add
      */ 
     public void add2Upload(Object[] o){
-	upload.addRow(o);
-    }    
+	upload.add2table(o);
+    }
+
+    /*****************************************************************************/
+    /**
+     * @author B2MB
+     * Graphical component which represents the [up/down]load component
+     */
+    private static  class VDULoad extends JPanel{
+	private VTable table;
+	
+	/**
+	 * Creates VDULoad component
+	 * @author B2MB
+	 * @param label of the table
+	 * @param strings to add to the table
+	 */
+	VDULoad(String label, String[] s){
+	    setLayout(new BorderLayout());
+	    
+	    table = new VTable(s);
+
+	    addText(label);
+	    add(table, BorderLayout.CENTER);
+	}
+
+	/**
+	 * Permits to add some text and icons to the component
+	 * @author B2MB
+	 * @param title of the component
+	 */
+	private void addText(String l){
+	    JPanel p = new JPanel();
+	    p.add(new JLabel(l));
+	    add(p, BorderLayout.NORTH);
+	}
+
+	/**
+	 * Permits to add a new line of object to the table 
+	 * @author B2MB
+	 * @param objects to add
+	 */
+	public void add2table(Object[] o){
+	    table.addRow(o);
+	}
+    }
 }
+
+
 
 
 

@@ -1,7 +1,11 @@
+package fr.umlv.b2mb.gui;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import java.awt.BorderLayout;
 import javax.swing.DefaultListModel;
@@ -20,6 +24,7 @@ import javax.swing.JTextField;
 public class VNetwork extends JPanel{
     private DefaultListModel model;
     private JList list;
+    private VTopComponent top; 
     // Only max_size elements on the list
     private int max_size = 10;
     
@@ -43,7 +48,7 @@ public class VNetwork extends JPanel{
 	
 	// Definition of the components
 	VMiddleComponent middle = new VMiddleComponent();
-	VTopComponent top = new VTopComponent();
+	top = new VTopComponent();
 	
 	// Defintion of the main component
 	JSplitPane main = new JSplitPane(JSplitPane.VERTICAL_SPLIT, middle, bottom);
@@ -63,6 +68,23 @@ public class VNetwork extends JPanel{
 	    model.removeElementAt(0);
 	}
 	model.addElement(s);
+    }
+
+
+    /**
+     * Permits to display Connected message
+     * @author B2MB
+     */
+    public void connect(){
+	top.connect();
+    }
+
+    /**
+     * Permits to display Disconnected message
+     * @author B2MB
+     */
+    public void disconnect(){
+	top.disconnect();
     }
 
     /**
@@ -135,9 +157,8 @@ public class VNetwork extends JPanel{
     private static class VTopComponent extends JPanel{
 	private GridBagLayout layout;
 	private GridBagConstraints constraints;
-	private JLabel connected = new JLabel("Connected");
-	private JLabel disconnected = new JLabel("Disconnected");
-
+	private JLabel status = new JLabel();
+	
 	/**
 	 * @author B2MB
 	 * Creates VTopComponent component
@@ -150,14 +171,13 @@ public class VNetwork extends JPanel{
 
 	    // Components
 	    JLabel statusPreview = new JLabel("Your current status is ");
-	    
-	    // Defintion of the colors
-	    connected.setForeground(Color.GREEN);
-	    disconnected.setForeground(Color.RED);
 
 	    // Add of components
 	    VNetwork.addComponent(this, layout, constraints, statusPreview, 0, 0, 2, 1);
-	    connect();
+
+	    // Add the status label
+	    VNetwork.addComponent(this, layout, constraints, status, 0, 3, 1, 1);
+	    disconnect();
 	}
 	
 	/**
@@ -165,7 +185,11 @@ public class VNetwork extends JPanel{
 	 * @author B2MB
 	 */
 	public void connect(){
-	    VNetwork.addComponent(this, layout, constraints, connected, 0, 2, 1, 1);
+	    // Defintion of the color
+	    status.setForeground(Color.GREEN);
+	    
+	    // Defintion of the text
+	    status.setText("Connected");
 	}
 
 	/**
@@ -173,7 +197,11 @@ public class VNetwork extends JPanel{
 	 * @author B2MB
 	 */
 	public void disconnect(){
-	    VNetwork.addComponent(this, layout, constraints, disconnected, 0, 3, 1, 1);
+	     // Defintion of the color
+	    status.setForeground(Color.RED);
+	    
+	    // Defintion of the text
+	    status.setText("Disconnected");
 	}
     }
 }

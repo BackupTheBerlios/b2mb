@@ -1,7 +1,13 @@
+package fr.umlv.b2mb.gui;
+
 public class Main{
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception{
+	VSplash splash = new VSplash();
+	splash.setVisible(true);
+	
 	VMainComponent m = new VMainComponent();
 
 	m.show();
+	splash.close();
     }
 }
