@@ -1,4 +1,4 @@
-package fr.umlv.b2mb.gui;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

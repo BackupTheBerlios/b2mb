@@ -1,4 +1,4 @@
-package fr.umlv.b2mb.gui;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -143,8 +143,7 @@ public class VMainComponent extends JFrame{
 	exit.setToolTipText("Exit the application");
 	exit.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
-		    //System.exit(0);
-		    add2Log("OK sa marche");
+		    System.exit(0);
 		}
 	    });
 	toolBar.add(exit);

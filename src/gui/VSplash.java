@@ -1,4 +1,4 @@
-package fr.umlv.b2mb.gui;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;
