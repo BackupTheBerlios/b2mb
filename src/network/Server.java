@@ -31,7 +31,7 @@ public class Server
 	this.server_threads = new Thread[conf]; /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
 	
 	/* creation of the thread array */
-	Runnable r = new ServerRunnable(conf, performer);
+	Runnable r = new ServerRunnable(conf, 8080, performer);
 	for(int i=0; i<this.server_threads.length; i++)
 	    this.server_threads[i]=new Thread(r);
     }

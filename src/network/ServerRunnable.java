@@ -15,13 +15,13 @@ public class ServerRunnable implements Runnable
     private ServerPerformerInterface performer;
     private ServerSocket server_socket;
     
-    public ServerRunnable(int conf, ServerPerformerInterface performer) 
+    public ServerRunnable(int conf, int port, ServerPerformerInterface performer) 
 	/* TEMPORARY: _______| :TO BE REPLACED BY A CONFIGURATION OBJECT */
 	throws IOException
     {
 	this.conf      = conf;
 	this.performer = performer;
-	server_socket  = new ServerSocket(this.conf); /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
+	server_socket  = new ServerSocket(port); /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
     }
     
     
