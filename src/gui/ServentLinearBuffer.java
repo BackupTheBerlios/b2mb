@@ -94,11 +94,8 @@ public class ServentLinearBuffer extends Container{
 			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			image = scaleOp.filter(image, null); 
 			
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-			
-			
 			// Converts into jpg
+			ByteArrayOutputStream output = new ByteArrayOutputStream();			
 			ImageIO.write(image, "jpg", output);
 			byte[] imageBuffer = output.toByteArray();
 

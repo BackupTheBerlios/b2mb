@@ -85,6 +85,12 @@ public class ServentLinear extends Container{
 			AffineTransform scale = AffineTransform.getScaleInstance(width/(double)image.getWidth(), height/(double)image.getHeight());
 			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			image = scaleOp.filter(image, null); 
+
+			// Converts in jpg
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			ImageIO.write(image, "jpg", output);
+			ByteArrayInputStream stream = new ByteArrayInputStream(output.toByteArray());
+			image = ImageIO.read(stream);
 			
 			Raster raster = image.getData();
 
@@ -120,7 +126,7 @@ public class ServentLinear extends Container{
 		    }
 		}
 	    })).start();
-     }
+    }
 
     // Server 10 raws by 10
     /*public void startServer(final String fileName){
@@ -141,14 +147,19 @@ public class ServentLinear extends Container{
 			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			image = scaleOp.filter(image, null); 
 			
+			// Converts in jpg
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			ImageIO.write(image, "jpg", output);
+			ByteArrayInputStream stream = new ByteArrayInputStream(output.toByteArray());
+			image = ImageIO.read(stream);
+			
 			Raster raster = image.getData();
 
 			int offset = 0;
 			boolean valide = true;
 
 			for(int i=0;i<10;i++){
-			    System.out.println(i);
-			while( (offset/width) < height){
+			    while( (offset/width) < height){
 			    if( (offset%width+w_3) < width ){
 				buffer = UDPImageDatagram.createImageDatagram(89, 1, 
 					     width*height, offset, (byte[])raster.getDataElements(offset%width, offset/width, w_3, 1, null));
