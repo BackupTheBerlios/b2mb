@@ -1,4 +1,4 @@
-//package fr.umlv.b2mb.parser;
+package parser;
 
 public class PayloadDescriptor
 {
