@@ -20,7 +20,7 @@ public class Server
      * If you want the server to begin his job, you will have to call the begin() 
      * method.
      * @param conf: The object that contains the configuration of the application.
-     * @param performer: An object that implements the ServerPerformer interface. The
+     * @param performer: An object that implements the ServerPerformerInterface interface. The
      * latter dictates the behaviour of the server.
      */
     public Server(int conf, ServerPerformerInterface performer) /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */

@@ -18,7 +18,9 @@ public class ServerPerformer implements ServerPerformerInterface
     {
 	try{
 	    BufferedReader r = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	    System.out.println("Ce qui a été lu:\n"+r.readLine());
+	    String read;
+	    while((read=r.readLine())!=null)
+		System.out.println("Ce qui a été lu:\n"+read);
 	}catch(IOException ioe){ ioe.printStackTrace(); }
     }
 }

@@ -2,7 +2,7 @@ package network;
 
 /**
  * <p>This class represents a client in a client-server architecture.
- * It simply initiate an array of thread that is activated by the
+ * It simply initiates an array of thread that is activated by the
  * method begin().</p>
  * <p>The developer can start or stop a client-thread with the methods
  * startThread() or endThread(). These methods don't affect the whole
@@ -13,24 +13,20 @@ public class Client
     private Thread  [] clients; //Contains all the client-threads
     private boolean [] free_clients; //Tells which clients are free
     private int        conf; //Contains all the parameters of the application
-    private ClientPerformerInterface performer; //The object that gives the client its behaviour
     
     
     
     /**
      * Creates an instance of a client.<br>
      * <b>Warning:</b> the call to this constructor MUST be followed
-     * by the call to begin(). Otherwise, no thread will be started.
+     * by the call to startClient(). Otherwise, no thread will be started.
      * @param conf The object that contains the configuration of the application.
-     * @param performer An object that implements the ClientPerformerInterface
-     * interface. The latter dictates the behaviour of the client.
      */
-    public Client(int conf, ClientPerformerInterface performer)
+    public Client(int conf)
     {
-	this.conf      = conf;
-	this.performer = performer;
+	this.conf    = conf;
+	this.clients = new Thread[this.conf];
 	initialiseFreeClients();
-	initialiseClientThreads();
     }
     
     /*
@@ -43,41 +39,49 @@ public class Client
 	    this.free_clients[i] = true;
     }    
     
-    /*
-     * Initialises the array of client-threads
-     */
-    private void initialiseClientThreads()
-    {
-	Runnable r = new ClientRunnable();
-	
-	this.clients = new Thread[this.conf];
-	for(int i=0; i<this.clients.length; i++)
-	    this.clients[i] = new Thread(r);
-    }
-    
-    
-    
     /**
-     * Starts all the client's threads.
+     * Removes dead threads from the list of the occupied threads.
+     * May enable startClient() to process a little bit faster.
      */
-    public void begin()
-    {	
-	for(int i=0; i<this.clients.length; i++)
-	    this.clients[i].start();
+    public void removeDeadThreads()
+    {
+	int i;
+	
+	for(i=0; i<this.free_clients.length; i++)
+	    if( (this.clients[i] != null)&&(!this.clients[i].isAlive()) )
+		this.free_clients[i] = true;
     }
-    
     
     
     /**
      * Starts a client-thread that is chosen by this object.
      * This system manages the selection of a client-thread, and selects one
      * that is inactive.
+     * <b>WARNING:</b>Make sure to create a new performer each time you call
+     * this method, because it is not garanteed that there won't be any
+     * share-variables problems with the threads.
      * @return the index of the thread that was selected, -1 if none could
      * have been selected.
      */
-    public int startThread()
+    public int startClient(String host, int port, ClientPerformerInterface performer)
     {
-	return -1;
+	int i;
+	
+	//finds a free client in 'free_clients'
+	for(i=0; (i<this.free_clients.length) && (!this.free_clients[i]); i++)
+	    if( (this.clients[i] != null)&&(!this.clients[i].isAlive()) )
+		break;
+		
+	if(i==this.free_clients.length)	return -1;
+	
+	//initialise the client's property
+	Runnable r = new ClientRunnable(this.conf, performer, host, port);	
+	this.clients[i] = new Thread(r);
+	
+	//the client starts his activity
+	this.clients[i].start();
+	
+	return i;
     }
     
     
