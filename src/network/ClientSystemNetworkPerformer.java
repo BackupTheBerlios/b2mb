@@ -21,10 +21,8 @@ import configuration.Setup;
 
 /**
  * This class processes all the queries directly linked to network queries, like
- * GNUTELLA CONNECT, PING.
- * In B2MB, there are two distinct clients:
- * - the ones that ask to download a animated picture
- * - the one that processes queries(GNUTELLA CONNECT, PING) sent by other peers.
+ * GNUTELLA CONNECT/OK, PING/PONG. In the B2MB project, the server only receives
+ * the queries and asks to this object to process it.
  */
 public class ClientSystemNetworkPerformer implements NetworkQueryListener
 {
@@ -110,13 +108,14 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     public void processQuery(byte [] query, Socket socket)
     {
 	byte descriptor = TCPDescriptorHeader.getPayloadDescriptor(query);
-	if(query == null)System.out.println("query est null");
-	if(socket == null)System.out.println("socket est null");
 	this.socket = socket;
-	if(this.socket == null)System.out.println("this.socket est null");
 	try{
-	    if(descriptor == PayloadDescriptor.PING)
-		{ System.out.println("On a reçu un ping."); sendAPong(query, socket); this.isOccupied = false; return; }
+	    if(descriptor == PayloadDescriptor.PING){
+		System.out.println("On a reçu un ping.");
+		sendAPong(query, socket);
+		this.isOccupied = false;
+		return;
+	    }
 	    if(descriptor == PayloadDescriptor.QUERY)
 		{ sendQueryHit(query, socket); return; }
 	    if((new String(query)).equals("GNUTELLA CONNECT/0.4\n\n")){ 
@@ -229,7 +228,6 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	TimerTask taskExecuter = new TimerTask(){
 		public void run(){
 		    try{
-			System.out.println("ClientSystemNetworkPerformer: L222: On envoie un ping");
 			sendPing();
 		    }catch(IOException ioe){
 			System.err.println("I/O error while sending a ping"); ioe.printStackTrace();
@@ -237,7 +235,7 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 		}
 	    };
 	this.timer = new Timer();
-	timer.schedule(taskExecuter, 0, 2*1000);//sends a ping every 15 seconds
+	timer.schedule(taskExecuter, 0, 15*1000);//sends a ping every 15 seconds
     }
     
     

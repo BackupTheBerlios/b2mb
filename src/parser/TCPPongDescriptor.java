@@ -7,15 +7,13 @@ import utils.ArrayManipulator;
  * Gnutella protocol v0.4. Please refer to this protocol for more
  * precision.
  */
-/* fonctionne */
 public class TCPPongDescriptor
 {
     private byte [] pongDescriptor;
     
     /**
      * Creates a TCP pong descriptor.
-     * @param descriptor_id A 16-byte string uniquely identifying the descriptor on the network
-     * @param payload_descriptor Ping, Pong, Push, Query, QueryHit(defined in PayloadDescriptor.java)
+     * @param descriptorID A 16-byte string uniquely identifying the descriptor on the network
      * @param ttl Time To Live. The number of times the descriptor will be forwarded by
      * Gnutella servents before it is removed from the network. Each servent will
      * decrement the TTL before passing it on to another servent. When the TTL
@@ -26,9 +24,6 @@ public class TCPPongDescriptor
      * <p>TTL(0) = TTL(i) + Hops(i)</p>
      * <p>Where TTL(i) and Hops(i) are the value of the TTL and Hops fields of the
      * header at the descriptor’s i-th hop, for i >= 0.</p>
-     * @param payload_length The length of the descriptor immediately following this header. The next
-     * descriptor header is located exactly Payload_Length bytes from the end of
-     * this header i.e. there are no gaps or pad bytes in the Gnutella data stream.
      * @param port The port number on which the responding host can accept incoming connections.
      * @param ipAddress The IP address of the responding host.
      * @param nbSharedFiles Shared The number of files that the servent with the given
@@ -90,8 +85,7 @@ public class TCPPongDescriptor
     {
 	int shift = TCPDescriptorHeader.getHeaderLength();
 	byte [] array = new byte[2];
-	for(int i=0; i<array.length; i++)
-	    array[i] = this.pongDescriptor[i+shift];
+	ArrayManipulator.copyArray(array, this.pongDescriptor, shift);
 	return ArrayManipulator.byteArray2Short(array);
     }
 
@@ -103,8 +97,7 @@ public class TCPPongDescriptor
     {
 	int shift = TCPDescriptorHeader.getHeaderLength()+2;
 	byte [] array = new byte[4];
-	for(int i=0; i<array.length; i++)
-	    array[i] = this.pongDescriptor[i+shift];
+	ArrayManipulator.copyArray(array, this.pongDescriptor, shift);
 	return array;
     }
     
@@ -117,8 +110,7 @@ public class TCPPongDescriptor
     {
 	int shift = TCPDescriptorHeader.getHeaderLength()+6;
 	byte [] array = new byte[4];
-	for(int i=0; i<array.length; i++)
-	    array[i] = this.pongDescriptor[i+shift];
+	ArrayManipulator.copyArray(array, this.pongDescriptor, shift);
 	return ArrayManipulator.byteArray2Int(array);
     }
 
@@ -131,8 +123,7 @@ public class TCPPongDescriptor
     {
 	int shift = TCPDescriptorHeader.getHeaderLength()+10;
 	byte [] array = new byte[4];
-	for(int i=0; i<array.length; i++)
-	    array[i] = this.pongDescriptor[i+shift];
+	ArrayManipulator.copyArray(array, this.pongDescriptor, shift);
 	return ArrayManipulator.byteArray2Int(array);
     }
 }

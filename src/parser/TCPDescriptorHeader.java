@@ -3,7 +3,12 @@ package parser;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import utils.ArrayManipulator;
-/*fonctionne*/
+
+/**
+ * This class represents a descriptor header as described in the
+ * Gnutella protocol v0.4. Please refer to this protocol for more
+ * precision.
+ */
 public class TCPDescriptorHeader
 {
     /**
@@ -23,7 +28,6 @@ public class TCPDescriptorHeader
      * @param payload_length The length of the descriptor immediately following this header. The next
      * descriptor header is located exactly Payload_Length bytes from the end of
      * this header i.e. there are no gaps or pad bytes in the Gnutella data stream.
-     * @param returnedArraySize the size that the returned array must have.
      * @return the descriptor header
      */
     protected static byte[] createTCPDescriptorHeader(byte [] descriptorID,

@@ -10,11 +10,12 @@ import parser.PayloadDescriptor;
 
 
 /**
- * Defines all the server's actions.
+ * Defines all the server's actions. Basically, the server only dispatches the processing
+ * of all queries to his client-listener.
  */
 public class ServerPerformer implements ServerPerformerInterface
 {
-    private NetworkQueryListener listener;
+    private NetworkQueryListener listener; //the client that will process the queries.
     
     public ServerPerformer(NetworkQueryListener listener)
     { this.listener = listener; }
@@ -30,7 +31,6 @@ public class ServerPerformer implements ServerPerformerInterface
 	switch(descriptor)
 	    {
 	    case(PayloadDescriptor.QUERYHIT):
-		/* Faudrait appeler l'objet intéressé par un queryhit */
 		System.out.println("Le serveur a reçu un queryhit");
 		break;
 	    case(PayloadDescriptor.PONG):
@@ -69,7 +69,6 @@ public class ServerPerformer implements ServerPerformerInterface
 	TimerTask taskExecuter = new TimerTask(){
 		public void run(){
 		    try{
-			System.out.println("ServerPerformer: L71: On envoie un ping");
 			client.sendPing();
 		    }catch(IOException ioe){
 			System.err.println("I/O error while sending a ping"); ioe.printStackTrace();
@@ -77,6 +76,6 @@ public class ServerPerformer implements ServerPerformerInterface
 		}
 	    };
 	Timer timer = new Timer();
-	timer.schedule(taskExecuter, 0, 2*1000000);//sends a ping every 15 seconds
+	timer.schedule(taskExecuter, 0, 15*1000);//sends a ping every 15 seconds
     }
 }

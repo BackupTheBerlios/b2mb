@@ -9,7 +9,6 @@ import utils.ArrayManipulator;
  * Gnutella protocol v0.4. Please refer to this protocol for more
  * precision.
  */
-/* fonctionne */
 public class TCPQueryDescriptor
 {
     private byte [] queryDescriptor;
@@ -18,7 +17,6 @@ public class TCPQueryDescriptor
     /**
      * Creates a TCP query descriptor.
      * @param descriptor_id A 16-byte string uniquely identifying the descriptor on the network
-     * @param payload_descriptor Ping, Pong, Push, Query, QueryHit(defined in PayloadDescriptor.java)
      * @param ttl Time To Live. The number of times the descriptor will be forwarded by
      * Gnutella servents before it is removed from the network. Each servent will
      * decrement the TTL before passing it on to another servent. When the TTL
@@ -29,15 +27,12 @@ public class TCPQueryDescriptor
      * <p>TTL(0) = TTL(i) + Hops(i)</p>
      * <p>Where TTL(i) and Hops(i) are the value of the TTL and Hops fields of the
      * header at the descriptor’s i-th hop, for i >= 0.</p>
-     * @param payload_length The length of the descriptor immediately following this header. The next
-     * descriptor header is located exactly Payload_Length bytes from the end of
-     * this header i.e. there are no gaps or pad bytes in the Gnutella data stream.
-     * @param port The port number on which the responding host can accept incoming connections.
-     * @param ipAddress The IP address of the responding host.
-     * @param nbSharedFiles Shared The number of files that the servent with the given
-     * IP address and port is sharing on the network.
-     * @param nbSharedKo The number of kilobytes of data that the servent with the
-     * given IP address and port is sharing on the network.
+     * @param minSpeed the minimum speed (in kb/second) of servents that should respond
+     * to this message. A servent receiving a Query descriptor with a Minimum Speed field
+     * of n kb/s should only respond with a QueryHit if it is able to communicate at a
+     * speed >= n kb/s
+     * @param searchCriteria a nul (i.e. 0x00) terminated search string. The maximum length
+     * of this string is bounded by the Payload_Length field of the descriptor header.
      * @return the descriptor header
      */
     public TCPQueryDescriptor(byte [] descriptorID,

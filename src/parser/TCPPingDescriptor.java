@@ -5,7 +5,6 @@ package parser;
  * Gnutella protocol v0.4. Please refer to this protocol for more
  * precision.
  */
-/*fonctionne*/
 public class TCPPingDescriptor
 {
     private byte[] pingDescriptor;
@@ -25,10 +24,6 @@ public class TCPPingDescriptor
      * <p>TTL(0) = TTL(i) + Hops(i)</p>
      * <p>Where TTL(i) and Hops(i) are the value of the TTL and Hops fields of the
      * header at the descriptor’s i-th hop, for i >= 0.</p>
-     * @param payload_length The length of the descriptor immediately following this header. The next
-     * descriptor header is located exactly Payload_Length bytes from the end of
-     * this header i.e. there are no gaps or pad bytes in the Gnutella data stream.
-     * @param returnedArraySize the size that the returned array must have.
      * @return the descriptor header
      */
     public TCPPingDescriptor(byte [] descriptorID,
@@ -40,7 +35,11 @@ public class TCPPingDescriptor
 							  ttl, hops,
 							  0);
     }
-    
+
+
+    /**
+     * Returns a ping descriptor under the form of a byte array.
+     */
     public byte[] getPingDescriptor()
     { return this.pingDescriptor; }
 }

@@ -16,18 +16,30 @@ import java.util.ListIterator;
 import java.net.Socket;
 import java.net.InetAddress;
 
+
+/**
+ * A Servent is a mix of clients and servers. This class contains a set of server, each
+ * of them possessing a client, a ClientSystemNetworkPerformer object. The server is destined
+ * to listen for a connection. The client, in the case of B2MB project, is charged to send
+ * discovery request like ping/pong, and also queries/query hits.
+ * This class is an interface between the GUI and the servent system: when the user asks something,
+ * the controller must call only this class.
+ */
 public class Servent
 {
     private ClientSystemNetworkPerformer [] clientSystem;
-    //private Client clients;
     private Vector knownPeers;
     private Setup configuration;
     private GuiController controller;
     private Hashtable listClientsServers;
     private ResultSet resultSet;
     
-    
-    
+        
+    /**
+     * Initiates the performers.
+     * @param config_file_name the file name that contains all the informations on the 
+     * application's property.
+     */
     private ServerPerformerInterface [] initPerformers(String config_file_name) throws IOException
     {	//init setup
 	this.configuration = new Setup(config_file_name);
@@ -46,7 +58,6 @@ public class Servent
 	return performers;
     }
     
-    
     /**
      * Starts the servent
      * @param config_file_name the name of the file which contains all the informations
@@ -54,15 +65,19 @@ public class Servent
      */
     public void startServent(String config_file_name) throws Exception
     {
-	ServerPerformerInterface [] performers = initPerformers(config_file_name);
-	Server server      = new Server(this.configuration, performers);
-	System.out.println("Launching the server");
-	server.begin();
-	System.out.println("Server has launched his threads");
-	//this.clients       = new Client(this.configuration);
-	this.knownPeers    = new Vector();
+	try{
+	    ServerPerformerInterface [] performers = initPerformers(config_file_name);
+	    Server server   = new Server(this.configuration, performers);
+	    System.out.println("Lancement du Serveur");
+	    server.begin();
+	    System.out.println("Le Serveur a déployé ses écouteurs");
+	    this.knownPeers = new Vector();
+	}
+	catch(java.net.BindException be)
+	    { System.err.println("Unable to start the servent: "+be.getMessage()); }
+	catch(IOException ioe)
+	    { ioe.printStackTrace(); }
     }
-    
     
     /**
      * Sets the controller.
@@ -72,19 +87,18 @@ public class Servent
     { this.controller = controller; }
     
     
+    
     /**
-     * Begin the download.
+     * Begins the download.
      * @param host the host that has the wanted files.
      * @param port the port to which this servent can connect for download.
      * @return the download identifier if everything went well, -1 otherwise.
      */
     public int download(String host, int port)
     {
-	/*ClientPerformerInterface client_performer = new ClientPerformer();
-	  return this.clients.startClient(host, port, client_performer);
-	*/
 	return 0;
     }
+    
     
     
     /**
@@ -100,23 +114,17 @@ public class Servent
     {
 	for(int i=0; i<clientSystem.length; i++)
 	    this.clientSystem[i].setActive(false);
-	System.out.println("Disconnected.");
+	System.out.println("Déconnecté");
     }
+    
+    
         
-    private int getUnoccupiedClient()
-    {
-	int i;
-	for(i=0; i<this.clientSystem.length; i++)
-	    if(!this.clientSystem[i].isOccupied())
-		break;
-	if(i!=this.clientSystem.length)
-	    return i;
-	return -1;
-    }
-        
+    /**
+     * Sends a search query to the connected peer.
+     * @param search_criteria the query's search criteria
+     */
     public void sendQuery(String search_criteria) throws IOException
     {   /* A MODIFIER */
-	System.out.println("recherche!!");
 	this.resultSet = null; //initialisation of the result set
 	byte [] descriptor_id = {12, 4, 5,  8, 1, 6,  5, 7, 8,  6, 4, 0,  5, 88, 56, 4};
 	TCPQueryDescriptor query = new TCPQueryDescriptor(descriptor_id, (byte)10, (byte)0,
@@ -129,12 +137,20 @@ public class Servent
 	    System.err.println("Servent did not send your query: all the clients were occupied.");
     }
     
+    
+    
     /**
-     * @return true if the given address is not already used.
+     * Returns the id of an unoccupied client.
      */
-    private boolean isNonUsedAddress(String address)
+    private int getUnoccupiedClient()
     {
-	
+	int i;
+	for(i=0; i<this.clientSystem.length; i++)
+	    if(!this.clientSystem[i].isOccupied())
+		break;
+	if(i!=this.clientSystem.length)
+	    return i;
+	return -1;
     }
     
     /**
@@ -143,14 +159,15 @@ public class Servent
     private ListIterator getAllAddresses()
     {
 	ArrayList addressList = new ArrayList();
-	String file_name = this.configuration.getPath()+File.separator+"addressFile.bmb";
+	String file_name =
+	    this.configuration.getPath()+File.separator+"configuration"+File.separator+"addressFile.bmb";
 	try{
 	    BufferedReader in = new BufferedReader(new FileReader(file_name));
 	    String address;
 	    String localAddress = InetAddress.getLocalHost().getHostAddress();
 	    
 	    while((address=in.readLine())!= null){
-		if(!address.equals(localAddress)&&isNonUsedAddress(address))
+		if(!address.equals(localAddress))
 		    addressList.add(address);
 	    }
 	    in.close();
@@ -159,6 +176,7 @@ public class Servent
 	    { System.err.println(file_name+": File not found");}
 	catch(IOException ioe)
 	    { System.err.println(ioe.getMessage()); ioe.printStackTrace(); }
+	if(addressList.size()==0)System.err.println("Could not connect to any known peer.");
 	return addressList.listIterator();
     }
     
@@ -169,11 +187,11 @@ public class Servent
     {
 	ListIterator it = getAllAddresses();
 	String addressIP;
-	while(it.hasNext())
-	    {
-		addressIP = (String)it.next();
-		int index_client = getUnoccupiedClient();
-		if(index_client!=-1){
+	int index_client = getUnoccupiedClient();
+	if(index_client!=-1){
+	    while(it.hasNext())
+		{
+		    addressIP = (String)it.next();
 		    try{
 			if(this.clientSystem[index_client].sendDemand2Connect(addressIP,
 									      configuration.getPort()))
@@ -182,9 +200,10 @@ public class Servent
 		    catch(IOException ioe)
 			{ System.err.println(ioe.getMessage()); ioe.printStackTrace(); }
 		}
-	    }
+	}
 	return false;
     }
+    
     
     
     /**
@@ -199,6 +218,7 @@ public class Servent
 	}catch(IOException ioe)
 	    { System.err.println(ioe.getMessage()); ioe.printStackTrace(); }
     }
+    
     
     
     /**

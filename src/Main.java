@@ -2,6 +2,9 @@ import network.Servent;
 import gui.VMainComponent;
 import controller.GuiController;
 
+/**
+ * Main class. Starts the servent and shows the graphical user interface.
+ */
 public class Main{
     public static void main(String[] args) throws Exception{
 	//VSplash splash = new VSplash();

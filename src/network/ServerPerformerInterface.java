@@ -4,7 +4,7 @@ import java.net.Socket;
 import java.io.IOException;
 
 /**
- * Defines all the server's actions.
+ * Declares all the server's actions.
  */
 public interface ServerPerformerInterface
 {
