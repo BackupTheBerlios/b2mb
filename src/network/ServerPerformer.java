@@ -45,10 +45,10 @@ public class ServerPerformer implements ServerPerformerInterface
      * Performs the server's actions.
      * Is destined to be used with the following classes: Server, ServerRunnable.
      */
-    public void perform(Socket socket)
+    public void perform(Socket socket) throws IOException
     {
-	try{
+	this.listener.setActive(true);
+	while(this.listener.isActive())
 	    dispatch(NetworkUtils.read(socket), socket);
-	}catch(IOException ioe){ ioe.printStackTrace(); }
     }
 }

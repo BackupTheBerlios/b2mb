@@ -28,6 +28,9 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 {
     private Setup conf;
     private GuiController controller;
+    private Socket socket;
+    private boolean isOccupied;
+    private boolean active;
     
     
     /**
@@ -102,8 +105,9 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     {
 	byte descriptor = TCPDescriptorHeader.getPayloadDescriptor(query);
 	try{
+	    if(this.socket != socket){ this.socket.close(); this.socket = socket; }
 	    if(descriptor == PayloadDescriptor.PING)
-		{ sendAPong(query, socket); return; }
+		{ sendAPong(query, socket); this.isOccupied = false; return; }
 	    if(descriptor == PayloadDescriptor.QUERY)
 		{ sendQueryHit(query, socket); return; }
 	    if((new String(query)).equals("GNUTELLA CONNECT/0.4\n\n")){ 
@@ -127,8 +131,10 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
      * @param socket the socket which links the two peers.
      * @return true if the connection was accepted, false otherwise.
      */
-    public boolean sendDemand2Connect(Socket socket) throws IOException
+    public boolean sendDemand2Connect(String [] addr_port) throws IOException
     {
+	this.isOccupied = true;
+	this.socket = new Socket(addr_port[0], Integer.parseInt(addr_port[1]));
 	System.out.println("Le client lance un bonjour dans la toile");
 	NetworkUtils.write(socket, "GNUTELLA CONNECT/0.4\n\n");
 	
@@ -136,32 +142,50 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	String response = NetworkUtils.read(socket, 0);
 	System.out.println("Le client percevrait-il quelque chose? "+response);
 	
-	if(response.equals("GNUTELLA OK\n\n"))return true;
+	if(response.equals("GNUTELLA OK\n\n")){ this.socket = socket; return true; }
+	this.socket.close();
 	return false;
     }
     
 
     /**
      * Sends a ping to a well-known peer.
-     * @param socket the socket which links the two peers.
      * @param ping the ping datagram to be sent.
      */
-    public void sendPing(Socket socket, TCPPingDescriptor ping) throws IOException
+    public void sendPing(TCPPingDescriptor ping) throws IOException
     {
-	NetworkUtils.write(socket, ping.getPingDescriptor());
-	
-	System.out.println("Le client écoute...");
-	byte [] array = NetworkUtils.read(socket);
+	this.isOccupied = true;
+	NetworkUtils.write(this.socket, ping.getPingDescriptor());
     }
     
-
+    
     /**
      * Sends a query.
-     * @param socket the socket which links the two peers.
      * @param query the query datagram to be sent.
      */
-    public void sendQuery(Socket socket, TCPQueryDescriptor query) throws IOException
+    public void sendQuery(TCPQueryDescriptor query) throws IOException
     {
-	NetworkUtils.write(socket, query.getTCPQueryDescriptor());
+	this.isOccupied = true;
+	NetworkUtils.write(this.socket, query.getTCPQueryDescriptor());
     }
+    
+    
+    //----------------------------- state methods -----------------------------\\
+    
+    
+    /**
+     * @return true if this client is occupied sending or processing a query.
+     */
+    public boolean isOccupied()
+    { return this.isOccupied; }
+    
+    /**
+     * @return true if this client is ready to proces or is processing.
+     */
+    public boolean isActive()
+    { return this.active; }
+    
+    
+    public void setActive(boolean value)
+    { this.active = value; }
 }

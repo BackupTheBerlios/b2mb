@@ -20,11 +20,11 @@ public class Server
      * of threads. The size of the array depends on the configuration of the system.
      * If you want the server to begin his job, you will have to call the begin() 
      * method.
-     * @param conf: The object that contains the configuration of the application.
-     * @param performer: An object that implements the ServerPerformerInterface interface. The
+     * @param conf The object that contains the configuration of the application.
+     * @param performer An object that implements the ServerPerformerInterface interface. The
      * latter dictates the behaviour of the server.
      */
-    public Server(Setup conf, ServerPerformerInterface performer)
+    public Server(Setup conf, ServerPerformerInterface [] performer)
 	throws IOException
     {
 	/* initialisation */
@@ -32,9 +32,10 @@ public class Server
 	this.server_threads = new Thread[this.conf.getNbProcessus()];
 	
 	/* creation of the thread array */
-	Runnable r = new ServerRunnable(this.conf.getPort(), performer);
-	for(int i=0; i<this.server_threads.length; i++)
+	for(int i=0; i<this.server_threads.length; i++){
+	    Runnable r = new ServerRunnable(this.conf.getPort(), performer[i]);
 	    this.server_threads[i]=new Thread(r);
+	}
     }
     
     
