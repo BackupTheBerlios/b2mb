@@ -22,8 +22,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 
 /**
- * @author B2MB
  * Graphical component which represents the shared files
+ * @author B2MB
  */
 public class VShared extends JPanel{
     private JTree tree;
@@ -32,9 +32,8 @@ public class VShared extends JPanel{
     private JPopupMenu popupMenu;
     
     /**
-     * @author B2MB
-     * @param name of the root
      * Creates Shared component
+     * @param name of the root
      */
     public VShared(String name){
 	// Set the look & feel
@@ -68,7 +67,6 @@ public class VShared extends JPanel{
 
     /**
      * Permits to scan the shared files' directory and add the files
-     * @author B2MB
      */
     public void scanDirectory(){
 	cleanRoot();
@@ -78,7 +76,8 @@ public class VShared extends JPanel{
     
     /**
      * Permits to scan the a directory and add the files
-     * @author B2MB
+     * @param the root
+     * @param the directory 
      */
     private void scanDirectory(DefaultMutableTreeNode fileRoot, File directory){
 	File[] all = directory.listFiles();
@@ -94,7 +93,6 @@ public class VShared extends JPanel{
     /*******************************************************************/
     /**
      * Permits to clean all the childs of the root
-     * @author B2MB
      */
     private void cleanRoot(){
 	while(root.getChildCount() != 0)
@@ -106,7 +104,7 @@ public class VShared extends JPanel{
     
     /**
      * Permits to add a new file among the shared files
-     * @author B2MB
+     * @param the root 
      * @param file to add
      */
     private void addFile(DefaultMutableTreeNode fileRoot, DefaultMutableTreeNode file){
@@ -115,7 +113,6 @@ public class VShared extends JPanel{
 
     /**
      * Permits to create a popMenu which will listen to the right click
-     * @author B2MB
      */
     private void createPopupMenu(){//RightActionListener ra){
 	JMenuItem menuTaskNew = new JMenuItem( "New task" );

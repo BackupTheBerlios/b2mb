@@ -6,6 +6,7 @@ import javax.swing.border.LineBorder;
 
 /**
  * Display a splash before the soft starts
+ * @author B2MB
  */
 
 class VSplash extends JWindow {
@@ -25,11 +26,8 @@ class VSplash extends JWindow {
     }
 
     public void close() {
-       //try{
-         //Thread.sleep(2000); //wait
-          setVisible(false);
-    	  dispose();
-        //} catch (InterruptedException e) {}
+	setVisible(false);
+	dispose();
     }
 
 }

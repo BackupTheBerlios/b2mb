@@ -24,6 +24,7 @@ import javax.swing.JToolBar;
 
 /**
  * This class represents the graphical view's main component of the application 
+ * @author B2MB
  */
 public class VMainComponent extends JFrame{
     private JTabbedPane tabbedPane;
@@ -40,7 +41,6 @@ public class VMainComponent extends JFrame{
     
     /**
      * Creates a VMainComponent
-     * @author B2MB
      */
     VMainComponent(){
 	super("B2M2 Peer to Peer");
@@ -64,7 +64,6 @@ public class VMainComponent extends JFrame{
     
     /**
      * Init the application's menu bar
-     * @author B2MB
      */
     private void initMenuBar(){
 	menuBar = new JMenuBar();
@@ -90,7 +89,6 @@ public class VMainComponent extends JFrame{
     
     /**
      * Inits the application's toolbar
-     * @author B2MB
      */
     private void initToolBar(){
 	Dimension dim =  new Dimension(50, 10);
@@ -144,7 +142,6 @@ public class VMainComponent extends JFrame{
     
     /**
      * Inits the application's tabs
-     * @author B2MB
      */
     private void initTabs(){
 	// addTab(String title, Icon icon, Component component, String tip);
@@ -169,11 +166,11 @@ public class VMainComponent extends JFrame{
     /******************************************/
     /**
      * Internal class which represents a specific MouseAdapter
+     * @author B2MB
      */
     private class InternalMouseListener extends MouseAdapter{
 	/**
 	 * Creates a new InternalMouseListner 
-	 * @author B2MB
 	 */
 	InternalMouseListener(){
 	    super();
@@ -181,7 +178,7 @@ public class VMainComponent extends JFrame{
 
 	/**
 	 * Invoked when the mouse has been pressed on a component.
-	 * @author B2MB
+	 * @param a MouseEvent
 	 */
 	public void mousePressed(MouseEvent e){
 	    System.exit(0);

@@ -13,12 +13,11 @@ import javax.swing.JTextField;
 
 
 /**
- * @author B2MB
  * Graphical component which represents the search main window
+ * @author B2MB
  */
 public class VSearch extends JPanel{
     /**
-     * @author B2MB
      * Creates VSearch component
      */
     VSearch(){
@@ -37,14 +36,14 @@ public class VSearch extends JPanel{
 
     /**************************************************************/
     /**
-     * @author B2MB
      * Graphical component which represents the search top component
+     * @author B2MB
      */
     private static class VTopSearchComponent extends JPanel{
 	private GridBagLayout layout;
 	private GridBagConstraints constraints;
+
 	/**
-	 * @author B2MB
 	 * Construcsts a VTopSearchComponent 
 	 */
 	VTopSearchComponent(){
@@ -60,7 +59,6 @@ public class VSearch extends JPanel{
 	
 	/**
 	 * Permits to add a new component in the Layout container
-	 * @author B2MB
 	 * @param component to add
 	 * @param row number
 	 * @param column number

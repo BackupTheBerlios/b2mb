@@ -18,8 +18,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 /**
- * @author B2MB
  * Graphical component which represents the network main window
+ * @author B2MB
  */
 public class VNetwork extends JPanel{
     private DefaultListModel model;
@@ -29,7 +29,6 @@ public class VNetwork extends JPanel{
     private int max_size = 10;
     
     /**
-     * @author B2MB
      * Creates Network component
      */
     VNetwork(){
@@ -60,7 +59,6 @@ public class VNetwork extends JPanel{
     
     /**
      * Permits to add a new object in the list of log
-     * @author B2MB
      * @param string to add
      */
     public void add(String s){
@@ -73,7 +71,6 @@ public class VNetwork extends JPanel{
 
     /**
      * Permits to display Connected message
-     * @author B2MB
      */
     public void connect(){
 	top.connect();
@@ -81,7 +78,6 @@ public class VNetwork extends JPanel{
 
     /**
      * Permits to display Disconnected message
-     * @author B2MB
      */
     public void disconnect(){
 	top.disconnect();
@@ -89,7 +85,6 @@ public class VNetwork extends JPanel{
 
     /**
      * Permits to add a new component in the Layout container
-     * @author B2MB
      * @param component which will contain the layout
      * @param layout to add to 
      * @param constraints to add to
@@ -114,8 +109,8 @@ public class VNetwork extends JPanel{
     /*****************************************************************/
     
     /**
-     * @author B2MB
      * Graphical component which represents the network's middle component
+     * @author B2MB
      */
     private static class VMiddleComponent extends JPanel{
 	private GridBagLayout layout;
@@ -125,7 +120,6 @@ public class VNetwork extends JPanel{
 	private JButton button = new JButton("Connect");
 	
 	/**
-	 * @author B2MB
 	 * Creates VMiddleComponent component
 	 */
 	VMiddleComponent(){
@@ -151,8 +145,8 @@ public class VNetwork extends JPanel{
      /*****************************************************************/
     
     /**
-     * @author B2MB
      * Graphical component which represents the network's top component
+     * @author B2MB
      */
     private static class VTopComponent extends JPanel{
 	private GridBagLayout layout;
@@ -160,7 +154,6 @@ public class VNetwork extends JPanel{
 	private JLabel status = new JLabel();
 	
 	/**
-	 * @author B2MB
 	 * Creates VTopComponent component
 	 */
 	VTopComponent(){
@@ -182,7 +175,6 @@ public class VNetwork extends JPanel{
 	
 	/**
 	 * Permits to display Connected message
-	 * @author B2MB
 	 */
 	public void connect(){
 	    // Defintion of the color
@@ -194,7 +186,6 @@ public class VNetwork extends JPanel{
 
 	/**
 	 * Permits to display Disconnected message
-	 * @author B2MB
 	 */
 	public void disconnect(){
 	     // Defintion of the color

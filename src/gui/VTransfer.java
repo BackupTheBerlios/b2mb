@@ -10,15 +10,14 @@ NB : Status va contenir une JProgressBar
 ************************************************************************/
 
 /**
- * @author B2MB
  * Graphical component which represents the transfer main window
+ * @author B2MB
  */
 public class VTransfer extends JPanel{
     private VDULoad upload;
     private VDULoad download;
     
     /**
-     * @author B2MB
      * Creates Transfer component
      */
     VTransfer(){
@@ -41,7 +40,6 @@ public class VTransfer extends JPanel{
     
     /**
      * Permits to add a new line of object to the dowload table 
-     * @author B2MB
      * @param objects to add
      */
     public void add2Download(Object[] o){
@@ -50,7 +48,6 @@ public class VTransfer extends JPanel{
 
     /**
      * Permits to add a new line of object to the upload table 
-     * @author B2MB
      * @param objects to add
      */ 
     public void add2Upload(Object[] o){
@@ -59,15 +56,14 @@ public class VTransfer extends JPanel{
 
     /*****************************************************************************/
     /**
-     * @author B2MB
      * Graphical component which represents the [up/down]load component
+     * @author B2MB
      */
     private static  class VDULoad extends JPanel{
 	private VTable table;
 	
 	/**
 	 * Creates VDULoad component
-	 * @author B2MB
 	 * @param label of the table
 	 * @param strings to add to the table
 	 */
@@ -82,7 +78,6 @@ public class VTransfer extends JPanel{
 
 	/**
 	 * Permits to add some text and icons to the component
-	 * @author B2MB
 	 * @param title of the component
 	 */
 	private void addText(String l){
@@ -93,7 +88,6 @@ public class VTransfer extends JPanel{
 
 	/**
 	 * Permits to add a new line of object to the table 
-	 * @author B2MB
 	 * @param objects to add
 	 */
 	public void add2table(Object[] o){

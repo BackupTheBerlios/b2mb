@@ -14,15 +14,14 @@ import javax.swing.JTextField;
 
 
 /**
- * @author B2MB
  * Graphical component which represents the preview window
+ * @author B2MB
  */
 public class VDisplay extends JPanel{
     private ServentLinear servent;
     //private ServentLinearByTen servent;
     
     /**
-     * @author B2MB
      * Creates VDisplay component
      */
     VDisplay(){
@@ -38,8 +37,8 @@ public class VDisplay extends JPanel{
 
     /**************************************************************/
     /**
-     * @author B2MB
      * Graphical component which represents the button test component
+     * @author B2MB
      */
     private class VButtonTest extends JPanel{
 	private GridBagLayout layout;
@@ -55,7 +54,6 @@ public class VDisplay extends JPanel{
 	final private JButton serverStart = new JButton("Start");
 	
 	/**
-	 * @author B2MB
 	 * Constructs a VButtonTest 
 	 */
 	VButtonTest(){
@@ -95,7 +93,6 @@ public class VDisplay extends JPanel{
 	
 	/**
 	 * Permits to add a new component in the Layout container
-	 * @author B2MB
 	 * @param component to add
 	 * @param row number
 	 * @param column number
@@ -115,4 +112,5 @@ public class VDisplay extends JPanel{
 	}
     }
 }
+
 

@@ -9,15 +9,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 /**
- * @author B2MB
  * Graphical component which represents a scrollable JTable 
+ * @author B2MB
  */
 public class VTable extends JScrollPane{
     private InternalTable internalTable;
 	
     /**
-     * @author B2MB
      * Creates ConnectedServent component
+     * @param a table of string respresenting the headers 
      */
     VTable(String[] headers){
 	super();
@@ -29,9 +29,8 @@ public class VTable extends JScrollPane{
     }
     
     /**
-     * @author B2MB
-     * @param row : a list of the object to add
      * Add a row at the end of the internal table in the scrollpane
+     * @param row : a list of the object to add
      */
     public void addRow(Object[] row){
 	internalTable.addRow(row);
@@ -39,15 +38,15 @@ public class VTable extends JScrollPane{
 
     /***********************************************************/
     /**
-     * @author B2MB
      * Table component inclued in the ConnectedServent component 
+     * @author B2MB
      */
     private static class InternalTable extends JTable{
 	private DefaultTableModel tableModel;
 	
 	/**
-	 * @author B2MB
 	 * Creates an empty table
+	 * @param a table of string respresenting the headers 
 	 */
 	InternalTable(String[] headers){
 	    tableModel = new DefaultTableModel(headers, 0);
@@ -63,9 +62,8 @@ public class VTable extends JScrollPane{
 	}
 	
 	/**
-	 * @author B2MB
-	 * @param row : a list of the object to add
 	 * Add a row at the end of the table model 
+	 * @param row : a list of the object to add
 	 */
 	public void addRow(Object[] row){
 	    tableModel.addRow(row);
