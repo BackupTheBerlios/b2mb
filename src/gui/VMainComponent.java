@@ -53,8 +53,8 @@ public class VMainComponent extends JFrame{
     /**
      * Creates a VMainComponent
      */
-    VMainComponent(){
-	super("B2M2 Peer to Peer");
+    public VMainComponent(){
+	super("B2MB - Peer to Peer");
 
 	// TEST
 	try{
@@ -63,10 +63,8 @@ public class VMainComponent extends JFrame{
 	    e.printStackTrace();
 	}
 	
-	controller = new GuiController();
 	// Create JTabbPane with a default tab placement of JTabbedPane.TOP
 	tabbedPane = new JTabbedPane();
-	controller.setView(tabbedPane);
 	// And add all the tabs
 	initTabs();
 	// Init the controller
@@ -188,11 +186,26 @@ public class VMainComponent extends JFrame{
 
 	tabbedPane.addTab("Shared Files", null, sharedFile, "Shared files");
 	
-	tabbedPane.addTab("Prewiew", null, display, "Display the current downloading file");
+	tabbedPane.addTab("Preview", null, display, "Display the current downloading file");
 	
 	getContentPane().add(tabbedPane);
     }
-
+    
+    /**
+     * @return the tabbed pane.
+     */
+    public JTabbedPane getPane()
+    { return this.tabbedPane; }
+    
+    
+    /**
+     * Sets the controller.
+     * @param controller the needed controller.
+     */
+    public void setController(GuiController controller)
+    { this.controller = controller; }
+    
+    
     /******************************************/
     /**
      * Internal class which represents a specific MouseAdapter

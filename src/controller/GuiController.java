@@ -2,8 +2,10 @@ package controller;
 
 import java.util.ArrayList;
 import javax.swing.JTabbedPane;
+import gui.VMainComponent;
 import gui.*;
 import parser.ResultSet;
+import network.Servent;
 
 /**
  * This class regroups all the methods contained in all the VComponents. 
@@ -11,6 +13,7 @@ import parser.ResultSet;
  */
 public class GuiController{
     private JTabbedPane tab;
+    private Servent servent;
 
     /**
      * Contructs a GuiController object
@@ -23,16 +26,16 @@ public class GuiController{
      * Set the view
      * @param 
      */
-    public void setView(JTabbedPane tab){
-	this.tab = tab;
+    public void setView(VMainComponent m){
+	this.tab = m.getPane();
     }
 
     /**
      * Set the model
      * @param 
      */
-    // FIXME
-    public void setModel(){
+    public void setModel(Servent servent){
+	this.servent = servent;
     }
     /*************************************************/
     // From VShared component
@@ -85,7 +88,8 @@ public class GuiController{
      * Permits to display Connected message
      */
     public void connect(){
-	((VNetwork)tab.getComponentAt(0)).connect();
+	if(this.servent.connect())
+	    ((VNetwork)tab.getComponentAt(0)).connect();
     }
 
     /**

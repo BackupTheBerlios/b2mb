@@ -25,7 +25,9 @@ public class VNetwork extends JPanel{
     private DefaultListModel model;
     private JList list;
     private VTopComponent top; 
-   
+    private VMiddleComponent middle;
+    
+    
     /**
      * Creates Network component
      */
@@ -43,7 +45,7 @@ public class VNetwork extends JPanel{
 
 	
 	// Definition of the components
-	VMiddleComponent middle = new VMiddleComponent();
+	this.middle = new VMiddleComponent();
 	top = new VTopComponent();
 	
 	// Defintion of the main component

@@ -19,10 +19,10 @@ public class Servent
     //private Client clients;
     private Vector knownPeers;
     private Setup configuration;
+    private GuiController controller;
     
     
-    private ServerPerformerInterface [] initPerformers(String config_file_name,
-						       GuiController controller) throws IOException
+    private ServerPerformerInterface [] initPerformers(String config_file_name) throws IOException
     {	//init setup
 	this.configuration = new Setup(config_file_name);
 	int nbproc = this.configuration.getNbProcessus();
@@ -37,14 +37,15 @@ public class Servent
 	return performers;
     }
     
+    
     /**
      * Starts the servent
      * @param config_file_name the name of the file which contains all the informations
      * on the application.
      */
-    public void startServent(String config_file_name, GuiController controller) throws Exception
+    public void startServent(String config_file_name) throws Exception
     {
-	ServerPerformerInterface [] performers = initPerformers(config_file_name, controller);
+	ServerPerformerInterface [] performers = initPerformers(config_file_name);
 	Server server      = new Server(this.configuration, performers);
 	System.out.println("Launching the server");
 	server.begin();
@@ -52,6 +53,13 @@ public class Servent
 	//this.clients       = new Client(this.configuration);
 	this.knownPeers    = new Vector();
     }
+    
+    /**
+     * Sets the controller.
+     * @param controller the needed controller.
+     */
+    public void setController(GuiController controller)
+    { this.controller = controller; }
     
     
     /**
@@ -74,6 +82,15 @@ public class Servent
      */
     public void killClient(int index)
     { this.clientSystem[index].setActive(false); }
+    
+    /**
+     * Kills all the client
+     */
+    public void killAllClients()
+    {
+	for(int i=0; i<clientSystem.length; i++)
+	    this.clientSystem[i].setActive(false);
+    }
     
     
     /**
@@ -114,7 +131,7 @@ public class Servent
     private ListIterator getAllAddresses()
     {
 	ArrayList addressList = new ArrayList();
-	String file_name = this.configuration.getPath()+File.pathSeparator+"addressFile.bmb";
+	String file_name = this.configuration.getPath()+File.separator+"addressFile.bmb";
 	try{
 	    BufferedReader in = new BufferedReader(new FileReader(file_name));
 	    String address;
@@ -135,15 +152,15 @@ public class Servent
     public boolean connect()
     {
 	ListIterator it = getAllAddresses();
-	String [] addr_port;
+	String addressIP;
 	while(it.hasNext())
 	    {
-		addr_port = ((String)it.next()).split(":");
-		if(addr_port.length != 2){ System.err.println("Address file corrupted");return false; }
+		addressIP = (String)it.next();
 		int index_client = getUnoccupiedClient();
 		if(index_client!=-1){
 		    try{
-			if(this.clientSystem[index_client].sendDemand2Connect(addr_port))
+			if(this.clientSystem[index_client].sendDemand2Connect(addressIP,
+									      configuration.getPort()))
 			    return true;
 		    }
 		    catch(IOException ioe)

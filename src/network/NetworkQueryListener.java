@@ -12,7 +12,7 @@ import java.io.IOException;
 public interface NetworkQueryListener extends EventListener
 {
     public void processQuery(byte [] descriptor, Socket socket);
-    public boolean sendDemand2Connect(String [] args) throws IOException;
+    public boolean sendDemand2Connect(String ipAddress, int port) throws IOException;
     public void sendPing(TCPPingDescriptor ping) throws IOException;    
     public void setActive(boolean value);
     public boolean isActive();

@@ -131,10 +131,10 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
      * @param socket the socket which links the two peers.
      * @return true if the connection was accepted, false otherwise.
      */
-    public boolean sendDemand2Connect(String [] addr_port) throws IOException
+    public boolean sendDemand2Connect(String ipAddress, int port) throws IOException
     {
 	this.isOccupied = true;
-	this.socket = new Socket(addr_port[0], Integer.parseInt(addr_port[1]));
+	this.socket = new Socket(ipAddress, port));
 	System.out.println("Le client lance un bonjour dans la toile");
 	NetworkUtils.write(socket, "GNUTELLA CONNECT/0.4\n\n");
 	
