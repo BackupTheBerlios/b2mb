@@ -36,7 +36,7 @@ public class ServentLinearByTen extends Container{
 			// Creation de l'image avec taille connue
 			image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 			WritableRaster raster = image.getRaster();
-
+			
 			int offset = 0;
 			int raw;
 			for(int i=0;i<10;i++){

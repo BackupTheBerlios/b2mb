@@ -9,6 +9,7 @@ import java.awt.geom.*;
 import javax.imageio.*;
 import javax.imageio.stream.*;
 import java.util.*;
+import java.nio.*;
 
 import parser.UDPImageDatagram;
 import utils.ArrayManipulator;
@@ -41,9 +42,9 @@ public class ServentLinearBuffer extends Container{
 			
 			width = Integer.parseInt(w);
 			height = Integer.parseInt(h);
-
+			
 			// The client knows the file's size
-			int size = 154421;
+			int size = 129575; //154421;
 			byte[] imageByte = new byte[size];
 			
 			byte[] buffer = new byte[1024];
@@ -55,32 +56,20 @@ public class ServentLinearBuffer extends Container{
 			    socket.receive(packet);
 			    
 			    ArrayManipulator.copyArrayAtEnd(imageByte, UDPImageDatagram.getFragment(buffer, packet.getLength()), offset);
+			    			    
 			    offset = UDPImageDatagram.getOffset(buffer);
-			    System.out.println("Client > "+offset);
+			    System.out.println("Client > "+offset+" / "+UDPImageDatagram.getFragmentSize(buffer, packet.getLength()));
 			    // Display and quit
-			    if( offset == size ){
+			    if( (offset+UDPImageDatagram.getFragmentSize(buffer, packet.getLength())) == size ){
+				//System.out.println("Client => "+imageByte[size-2]+" "+imageByte[size-1]);
+				byte[] b = UDPImageDatagram.getFragment(buffer, packet.getLength());
+				// BUGS => FIXME
+				System.out.println("Client End => "+b[b.length-2]+" "+b[b.length-1]);
+				
 				ByteArrayInputStream stream = new ByteArrayInputStream(imageByte);
-				//System.out.println(ImageIO.read(ImageIO.createImageInputStream(stream)));
-				ServentLinearBuffer.this.setImage(ImageIO.read(ImageIO.createImageInputStream(stream)));
+				ServentLinearBuffer.this.setImage(ImageIO.read(stream));
 				ServentLinearBuffer.this.repaint();
-				/*File f = new File("Images/linux.jpg");
-				ImageInputStream input = ImageIO.createImageInputStream(f);
-				byte[] t = new byte[size];
-				input.readFully(t);
-
-				for(int i=0;i<size;i++){
-				    System.out.println(i);
-				    if( t[i] != imageByte[i] ){
-					System.out.println(t[i]+" != "+imageByte[i]);
-					for(int j=0;j<8;j++)
-					    System.out.print((t[i]>>j)&1);
-					System.out.println();
-					for(int j=0;j<8;j++)
-					    System.out.print((imageByte[i]>>j)&1);
-					System.out.println("ERROR !!");
-					System.exit(1);
-				    }
-				    }*/
+				
 				break;
 			    }
 			}
@@ -104,37 +93,50 @@ public class ServentLinearBuffer extends Container{
 			byte[] buffer = new byte[2];
 			DatagramPacket packet = new  DatagramPacket(buffer, 2, InetAddress.getLocalHost(), 50000); 
 
-			File f = new File(fileName);
-			ImageInputStream input = ImageIO.createImageInputStream(f);
-
-			// Converts in JPG
-			// ...
-
-			// Possible scaling
-			//AffineTransform scale = AffineTransform.getScaleInstance(width/(double)image.getWidth(), height/(double)image.getHeight());
-			//AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-			//image = scaleOp.filter(image, null); 
 			
-			int tmp = 0;
+			File f = new File(fileName);
+			BufferedImage image = ImageIO.read(f);
+
+			// Scaling
+			AffineTransform scale = AffineTransform.getScaleInstance(width/(double)image.getWidth(), height/(double)image.getHeight());
+			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			image = scaleOp.filter(image, null); 
+			
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+			
+			
+			// Converts into jpg
+			ImageIO.write(image, "jpg", output);
+			byte[] imageBuffer = output.toByteArray();
+
+			System.out.println("Taille "+imageBuffer.length);
 			int offset = 0;
-			boolean valide = true;
-			int size = (int)input.length();
+			int size = (int)imageBuffer.length;
 			byte[] fragment = new byte[1006];
+			ByteBuffer byteBuffer = ByteBuffer.wrap(imageBuffer);
+			
 			while(offset <= size){
+			    // Only at the end 
 			    if( (offset+w_3) > size )
 				fragment = new byte[size-offset];
 			    
-			    tmp = input.read(fragment);
+			    // Init the fragment
+			    byteBuffer.get(fragment);
+						    
 			    buffer = UDPImageDatagram.createImageDatagram(89, 1, 
 					     width*height, offset, fragment);
 
-			    offset += tmp;
-			    
+			    // Increments the offset
+			    offset += w_3;
+
 			    packet.setData(buffer);
 			    
 			    socket.send(packet);
-			    Thread.currentThread().sleep(100);
+			    Thread.currentThread().sleep(1);
 			}
+			System.out.println("Server End => "+fragment[fragment.length-2]+" "+fragment[fragment.length-1]);
+			System.out.println("Serveur a fini");
 			socket.close();
 		    }catch(Exception e){
 			e.printStackTrace();

@@ -41,24 +41,23 @@ public class ServentLinear extends Container{
 			image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 			WritableRaster raster = image.getRaster();
 			
-			int raw = 0;
-			int t = 1;
+			
 			boolean firstTime = true;
+			int offset;
+			
 			while(true){
 			    socket.receive(packet);
+
+			    offset = UDPImageDatagram.getOffset(buffer);
 			    // Height will always be 1 for linear
-			    raster.setDataElements(UDPImageDatagram.getOffset(buffer), raw, UDPImageDatagram.getFragmentSize(buffer, packet.getLength())/3, 1, UDPImageDatagram.getFragment(buffer, packet.getLength()));
+			    raster.setDataElements(offset%width, offset/width, UDPImageDatagram.getFragmentSize(buffer, packet.getLength())/3, 1, UDPImageDatagram.getFragment(buffer, packet.getLength()));
+			    
 			    // RE-DISPLAY	    
 			    ServentLinear.this.repaint();
-			    
-			    // Exit
-			    if( (raw == (height-1)) && ((UDPImageDatagram.getOffset(buffer)+UDPImageDatagram.getFragmentSize(buffer, packet.getLength())/3) == width) )
-				break;
 
-			    // Increment the raw if necessary
-			    if( !firstTime && (UDPImageDatagram.getOffset(buffer) == 0))
-				++ raw;
-			    else firstTime = false;
+			    // Exit
+			    if( (offset/width == (height-1)) && ((offset%width+UDPImageDatagram.getFragmentSize(buffer, packet.getLength())/3) == width) )
+				break;
 			}
 			socket.close();
 		    }catch(Exception e){
@@ -73,17 +72,13 @@ public class ServentLinear extends Container{
 	(new Thread(new Runnable(){
 		public void run(){
 		    try{
-			int w_3 = 1006/3; //341;
+			int w_3 = 1006/3; 
 			
 			DatagramSocket socket = new DatagramSocket();
 	
 			byte[] buffer = new byte[2];
 			DatagramPacket packet = new  DatagramPacket(buffer, 2, InetAddress.getLocalHost(), 50000); 
 
-			File f = new File(fileName);
-			ImageInputStream input = ImageIO.createImageInputStream(f);
-			Iterator it = ImageIO.getImageReadersByFormatName("gif");
-			
 			BufferedImage image = ImageIO.read(new File(fileName));
 			
 			// Scaling
@@ -93,34 +88,31 @@ public class ServentLinear extends Container{
 			
 			Raster raster = image.getData();
 
-			int raw = 0;
+			System.out.println(image.getHeight()+"  "+raster.getHeight());
 			int offset = 0;
 			boolean valide = true;
-			
-			while(raw < height){
-			    if( (offset+w_3) < width ){
+						
+			while( (offset/width) < height){
+			    if( (offset%width+w_3) < width ){
 				buffer = UDPImageDatagram.createImageDatagram(89, 1, 
-					     width*height, offset, (byte[])raster.getDataElements(offset, raw, w_3, 1, null));
+					     width*height, offset, (byte[])raster.getDataElements(offset%width, offset/width, w_3, 1, null));
 				valide = true;
 			    }
 			    else{
 				buffer = UDPImageDatagram.createImageDatagram(89, 1, 
-					     width*height, offset, (byte[])raster.getDataElements(offset, raw, width-offset, 1, null));
+					     width*height, offset, (byte[])raster.getDataElements(offset%width, offset/width, width-offset%width, 1, null));
 				valide = false;
 			    }
+			    			    
 			    if( valide )
 				offset += w_3;
 			    else
-				offset += width-offset;
-			    if( offset >= width ){
-				++raw;
-				offset = offset%width;
-			    }
-			
+				offset += width-offset%width;
+			    			
 			    packet.setData(buffer);
-			
+			    
 			    socket.send(packet);
-			    Thread.currentThread().sleep(100);
+			    Thread.currentThread().sleep(1);
 			}
 			socket.close();
 		    }catch(Exception e){
@@ -128,7 +120,65 @@ public class ServentLinear extends Container{
 		    }
 		}
 	    })).start();
-    }
+     }
+
+    // Server 10 raws by 10
+    /*public void startServer(final String fileName){
+	(new Thread(new Runnable(){
+		public void run(){
+		    try{
+			int w_3 = 1006/3; 
+			
+			DatagramSocket socket = new DatagramSocket();
+	
+			byte[] buffer = new byte[2];
+			DatagramPacket packet = new  DatagramPacket(buffer, 2, InetAddress.getLocalHost(), 50000); 
+
+			BufferedImage image = ImageIO.read(new File(fileName));
+			
+			// Scaling
+			AffineTransform scale = AffineTransform.getScaleInstance(width/(double)image.getWidth(), height/(double)image.getHeight());
+			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			image = scaleOp.filter(image, null); 
+			
+			Raster raster = image.getData();
+
+			int offset = 0;
+			boolean valide = true;
+
+			for(int i=0;i<10;i++){
+			    System.out.println(i);
+			while( (offset/width) < height){
+			    if( (offset%width+w_3) < width ){
+				buffer = UDPImageDatagram.createImageDatagram(89, 1, 
+					     width*height, offset, (byte[])raster.getDataElements(offset%width, offset/width, w_3, 1, null));
+				valide = true;
+			    }
+			    else{
+				buffer = UDPImageDatagram.createImageDatagram(89, 1, 
+					     width*height, offset, (byte[])raster.getDataElements(offset%width, offset/width, width-offset%width, 1, null));
+				valide = false;
+			    }
+			    			    
+			    if( valide )
+				offset += w_3;
+			    else{
+				offset += width-offset%width;
+				offset += 10*width;
+			    }
+			    packet.setData(buffer);
+			    
+			    socket.send(packet);
+			    Thread.currentThread().sleep(1);
+			}
+			}
+			socket.close();
+		    }catch(Exception e){
+			e.printStackTrace();
+		    }
+		}
+	    })).start();
+	    }*/
 }
 
 
