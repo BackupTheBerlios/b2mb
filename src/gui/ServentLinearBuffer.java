@@ -23,15 +23,12 @@ public class ServentLinearBuffer extends Container{
     }
 
     public void paint(Graphics g){
-	if( image != null ){
+	if( image != null )
 	    g.drawImage(image, 0, 0, this);
-	    System.out.println("Repaint");
-	}
     }
 
     public void setImage(BufferedImage image){
 	this.image = image;
-	System.out.println(image);
     }
     
     public void startClient(final String w, final String h){
@@ -44,7 +41,7 @@ public class ServentLinearBuffer extends Container{
 			height = Integer.parseInt(h);
 			
 			// The client knows the file's size
-			int size = 129575; //154421;
+			int size = /*8106;*/ 129575; //154421;
 			byte[] imageByte = new byte[size];
 			
 			byte[] buffer = new byte[1024];
@@ -54,18 +51,13 @@ public class ServentLinearBuffer extends Container{
 			// Creation de l'image avec taille connue
 			while(true){
 			    socket.receive(packet);
-			    
-			    ArrayManipulator.copyArrayAtEnd(imageByte, UDPImageDatagram.getFragment(buffer, packet.getLength()), offset);
-			    			    
+
 			    offset = UDPImageDatagram.getOffset(buffer);
-			    System.out.println("Client > "+offset+" / "+UDPImageDatagram.getFragmentSize(buffer, packet.getLength()));
-			    // Display and quit
+			    ArrayManipulator.copyArrayAtEnd(imageByte, UDPImageDatagram.getFragment(buffer, packet.getLength()), offset);
+			    
+			    // At the end Display and quit
 			    if( (offset+UDPImageDatagram.getFragmentSize(buffer, packet.getLength())) == size ){
-				//System.out.println("Client => "+imageByte[size-2]+" "+imageByte[size-1]);
 				byte[] b = UDPImageDatagram.getFragment(buffer, packet.getLength());
-				// BUGS => FIXME
-				System.out.println("Client End => "+b[b.length-2]+" "+b[b.length-1]);
-				
 				ByteArrayInputStream stream = new ByteArrayInputStream(imageByte);
 				ServentLinearBuffer.this.setImage(ImageIO.read(stream));
 				ServentLinearBuffer.this.repaint();
@@ -131,12 +123,10 @@ public class ServentLinearBuffer extends Container{
 			    offset += w_3;
 
 			    packet.setData(buffer);
-			    
+
 			    socket.send(packet);
 			    Thread.currentThread().sleep(1);
 			}
-			System.out.println("Server End => "+fragment[fragment.length-2]+" "+fragment[fragment.length-1]);
-			System.out.println("Serveur a fini");
 			socket.close();
 		    }catch(Exception e){
 			e.printStackTrace();
