@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+
 /**
  * @author B2MB
  * Graphical component which represents the preview window
@@ -63,11 +64,14 @@ public class VDisplay extends JPanel{
 	    
 	    this.setLayout(layout);
 
+	    serverStart.setEnabled(false);
+	    
 	    // Add the actions
 	    clientStart.addActionListener(new ActionListener(){
 		    public void actionPerformed(ActionEvent e){
 			VDisplay.this.repaint();
 			servent.startClient(widthField.getText(), heightField.getText());
+			serverStart.setEnabled(true);
 		    }
 		});
 	    serverStart.addActionListener(new ActionListener(){

@@ -8,9 +8,10 @@ import java.awt.image.*;
 import java.awt.geom.*; 
 import javax.imageio.*;
 
-public class ServentLinear extends JPanel{
+public class ServentLinear extends Container{
     private BufferedImage image = null;
     private Thread client;
+    private int width = 0, height = 0;
     
     public ServentLinear(){
     }
@@ -25,9 +26,9 @@ public class ServentLinear extends JPanel{
 		public void run(){
 		    try{
 			DatagramSocket socket = new DatagramSocket(50000);
-		
-			int width = Integer.parseInt(w);
-			int height = Integer.parseInt(h);
+			
+			width = Integer.parseInt(w);
+			height = Integer.parseInt(h);
 			
 			byte[] buffer = new byte[1023];
 			DatagramPacket packet = new  DatagramPacket(buffer, 1023); 
@@ -86,18 +87,18 @@ public class ServentLinear extends JPanel{
 			DatagramPacket packet = new  DatagramPacket(buffer, 2, InetAddress.getLocalHost(), 50000); 
 
 			BufferedImage image = ImageIO.read(new File(fileName));
-
+			System.out.println("Width = "+image.getWidth()+"  Height = "+image.getHeight());
 			// Scaling
-			AffineTransform scale = AffineTransform.getScaleInstance(500/150, 500/110);
+			AffineTransform scale = AffineTransform.getScaleInstance(width/(double)image.getWidth(), height/(double)image.getHeight());
 			//getShearInstance(2, 2);
 			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			image = scaleOp.filter(image, null); 
 			
 			Raster raster = image.getData();
 
-			int height = raster.getHeight();
-			int width = raster.getWidth();
-			System.out.println(height+"  "+width);
+			//int height = raster.getHeight();
+			//int width = raster.getWidth();
+			System.out.println("Width = "+image.getWidth()+"  Height = "+image.getHeight());
 			
 			int raw = 0;
 			int offset = 0;

@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.border.LineBorder;
 
 /**
- * Class to put a splash before lunch the soft
+ * Display a splash before the soft starts
  */
 
 class VSplash extends JWindow {

@@ -7,10 +7,11 @@ import java.io.*;
 import java.awt.image.*;
 import javax.imageio.*;
 
-public class ServentLinearByTen extends JPanel{
+public class ServentLinearByTen extends Container{
     private BufferedImage image = null;
     private Thread client;
     private int incr = 10;
+    private int width = 0, height = 0;
     
     public ServentLinearByTen(){
     }
@@ -26,8 +27,8 @@ public class ServentLinearByTen extends JPanel{
 		    try{
 			DatagramSocket socket = new DatagramSocket(50000);
 		
-			int width = Integer.parseInt(w);
-			int height = Integer.parseInt(h);
+			width = Integer.parseInt(w);
+			height = Integer.parseInt(h);
 			
 			byte[] buffer = new byte[1023];
 			DatagramPacket packet = new  DatagramPacket(buffer, 1023); 
@@ -100,8 +101,8 @@ public class ServentLinearByTen extends JPanel{
 			BufferedImage image = ImageIO.read(new File(fileName));
 			Raster raster = image.getData();
 
-			int height = raster.getHeight();
-			int width = raster.getWidth();
+			//int height = raster.getHeight();
+			//int width = raster.getWidth();
 						
 			boolean valide = true;
 
