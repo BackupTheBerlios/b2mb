@@ -15,7 +15,6 @@ public class Setup{
     private Properties prop = null;
 
     /**
-     * @author B2MB
      * Creates a configuration object
      */
     public Setup(String fileName) throws IOException, FileNotFoundException{
@@ -26,7 +25,6 @@ public class Setup{
 
     /****************************************************************************/
     /**
-     * @author B2MB
      * load all the elements contained in a file
      */
     public void load() throws IOException, FileNotFoundException{
@@ -42,7 +40,6 @@ public class Setup{
     }
 
     /**
-     * @author B2MB
      * save all the elements in a file
      */
     public void save() throws IOException{
@@ -55,7 +52,6 @@ public class Setup{
 
     /**
      * Permit to get the path of the shared files
-     * @author B2MB
      * @return path
      */
     public String getPath(){
@@ -64,7 +60,6 @@ public class Setup{
 
     /**
      * Permit to get the number of processus used by the application
-     * @author B2MB
      * @return number 
      */
     public int getNbProcessus(){
@@ -73,7 +68,6 @@ public class Setup{
 
     /**
      * Permit to get the number of clients authorized by the application
-     * @author B2MB
      * @return number 
      */
     public int getNbClients(){
@@ -82,7 +76,6 @@ public class Setup{
     
     /**
      * Permit to get the available port.
-     * @author B2MB
      * @return the port
      */
     public int getPort(){
@@ -92,7 +85,6 @@ public class Setup{
     /****************************************************************************/
     /**
      * Permit to set the available port
-     * @author B2MB
      * @param port
      */
     public void setPort(int port){
@@ -101,7 +93,6 @@ public class Setup{
     
     /**
      * Permit to set the path of the shared files
-     * @author B2MB
      * @param path 
      */
     public void setPath(String path){
@@ -110,7 +101,6 @@ public class Setup{
 
     /**
      * Permit to set the number of processus used by the application
-     * @author B2MB
      * @param value 
      */
     public void setNbProcessus(int value){
@@ -119,7 +109,6 @@ public class Setup{
 
     /**
      * Permit to set the number of clients authorized by the application
-     * @author B2MB
      * @param value 
      */
     public void setNbClients(int value){
