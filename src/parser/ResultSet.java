@@ -2,7 +2,8 @@ package parser;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
-
+import utils.ArrayManipulator;
+/* fonctionne */
 /**
  * This class represents all of the results of a Query.
  * Please refer to this protocol Gnutella v0.4 for more precision about the aim of 
@@ -33,14 +34,16 @@ public class ResultSet
     public ResultSet(byte [] array)
     {
 	int i, j;
+	this.resultSet = new ArrayList();
 	for(i=0; i<array.length;)
-	    {
-		for(j=0; (j<array.length-1)&&(array[j]!=0||array[j+1]!=0);j++);
-		if(array[j]==0&&array[j+1]==0){
-		    byte [] extract = new byte[j-i+1];
+	    {   //i+8: the 8 first bytes are used to code the 2 first int(fileIndex & fileSize)
+		for(j=i+8; (j<array.length-1)&&(array[j]!=0||array[j+1]!=0);j++);
+		if(j<array.length-1){
+		    byte [] extract = new byte[j-i+2];
+		    ArrayManipulator.copyArray(extract, array, i);
 		    this.resultSet.add(new Result(extract));
 		}
-		i+=j;
+		i=j+2;
 	    }
     }
     
@@ -75,11 +78,11 @@ public class ResultSet
 		finalArraySize+=r.getArraySize();
 	    }
 	byte [] returnedArray = new byte[finalArraySize];
-	int shift = 0;
+	int shift = 0; it = this.resultSet.listIterator();
 	while(it.hasNext())
 	    {
 		r = (Result)it.next();
-		copyArray(returnedArray, r.getResultInByteArray(), shift);
+		ArrayManipulator.copyArray(returnedArray, r.getResultInByteArray(), shift);
 		shift+=r.getArraySize();
 	    }
 	return returnedArray;
