@@ -25,9 +25,7 @@ public class VNetwork extends JPanel{
     private DefaultListModel model;
     private JList list;
     private VTopComponent top; 
-    // Only max_size elements on the list
-    private int max_size = 10;
-    
+   
     /**
      * Creates Network component
      */
@@ -36,7 +34,6 @@ public class VNetwork extends JPanel{
 	
 	// Defintion of the list
 	model = new DefaultListModel();
-	model.setSize(max_size);
 	list = new JList(model); 
 
 	// TEST
