@@ -104,8 +104,11 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     public void processQuery(byte [] query, Socket socket)
     {
 	byte descriptor = TCPDescriptorHeader.getPayloadDescriptor(query);
+	if(query == null)System.out.println("query est null");
+	if(socket == null)System.out.println("socket est null");
+	if(this.socket == null)System.out.println("this.socket est null");
 	try{
-	    if(this.socket != socket){ this.socket.close(); this.socket = socket; }
+	    //if(this.socket != socket){ /*this.socket.close();*/ this.socket = socket; }
 	    if(descriptor == PayloadDescriptor.PING)
 		{ sendAPong(query, socket); this.isOccupied = false; return; }
 	    if(descriptor == PayloadDescriptor.QUERY)
@@ -134,12 +137,12 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     public boolean sendDemand2Connect(String ipAddress, int port) throws IOException
     {
 	this.isOccupied = true;
-	this.socket = new Socket(ipAddress, port));
+	this.socket = new Socket(ipAddress, port);
 	System.out.println("Le client lance un bonjour dans la toile");
-	NetworkUtils.write(socket, "GNUTELLA CONNECT/0.4\n\n");
+	NetworkUtils.write(this.socket, "GNUTELLA CONNECT/0.4\n\n");
 	
 	System.out.println("Le client écoute...");
-	String response = NetworkUtils.read(socket, 0);
+	String response = NetworkUtils.read(this.socket, 0);
 	System.out.println("Le client percevrait-il quelque chose? "+response);
 	
 	if(response.equals("GNUTELLA OK\n\n")){ this.socket = socket; return true; }
