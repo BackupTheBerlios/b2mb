@@ -8,6 +8,8 @@ import java.awt.image.*;
 import java.awt.geom.*; 
 import javax.imageio.*;
 
+import parser.UDPImageDatagram;
+
 public class ServentLinear extends Container{
     private BufferedImage image = null;
     private Thread client;
@@ -30,37 +32,31 @@ public class ServentLinear extends Container{
 			width = Integer.parseInt(w);
 			height = Integer.parseInt(h);
 			
-			byte[] buffer = new byte[1023];
-			DatagramPacket packet = new  DatagramPacket(buffer, 1023); 
+			byte[] buffer = new byte[1024];
+			DatagramPacket packet = new  DatagramPacket(buffer, 1024); 
 		
 			// Creation de l'image avec taille connue
 			image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 			WritableRaster raster = image.getRaster();
 		
 			int raw = 0;
-			int offset = 0;
+			int t = 1;
+			boolean firstTime = true;
 			while(true){
 			    socket.receive(packet);
-		    
-			    // Height will always be 1 for linear 
-			    raster.setDataElements(offset, raw, packet.getLength()/3, 1, buffer);
-		    
+			    // Height will always be 1 for linear
+			    raster.setDataElements(UDPImageDatagram.getOffset(buffer), raw, UDPImageDatagram.getFragmentSize(buffer, packet.getLength())/3, 1, UDPImageDatagram.getFragment(buffer, packet.getLength()));
 			    // RE-DISPLAY	    
 			    ServentLinear.this.repaint();
-
+			    
 			    // Exit
-			    if( (raw == (height-1)) && ((offset+packet.getLength()/3) == width) )
+			    if( (raw == (height-1)) && ((UDPImageDatagram.getOffset(buffer)+UDPImageDatagram.getFragmentSize(buffer, packet.getLength())/3) == width) )
 				break;
-			    			    
-			    // INIT
-			    offset += packet.getLength()/3;
-			    if( offset >= width ){
-				++raw;
-				offset = offset%width;
-			    }
-		    
-			    // SETDATA
-			    //packet.setData(buffer);
+
+			    // Increment the raw if necessary
+			    if( !firstTime && (UDPImageDatagram.getOffset(buffer) == 0))
+				++ raw;
+			    else firstTime = false;
 			}
 			socket.close();
 		    }catch(Exception e){
@@ -70,17 +66,13 @@ public class ServentLinear extends Container{
 	    });
 	client.start();
     }
-
-    /*public void stopClient(){
-      image = null;
-      client.stop();
-      }*/
-
+    
     public void startServer(final String fileName){
 	(new Thread(new Runnable(){
 		public void run(){
 		    try{
-			int w_3 = 341;
+			int w_3 = 1006/3; //341;
+			
 			DatagramSocket socket = new DatagramSocket();
 	
 			byte[] buffer = new byte[2];
@@ -98,17 +90,18 @@ public class ServentLinear extends Container{
 			int raw = 0;
 			int offset = 0;
 			boolean valide = true;
-		    
+			
 			while(raw < height){
 			    if( (offset+w_3) < width ){
-				buffer = (byte[])raster.getDataElements(offset, raw, w_3, 1, null);
+				buffer = UDPImageDatagram.createImageDatagram(89, 1, 
+					     width*height, offset, (byte[])raster.getDataElements(offset, raw, w_3, 1, null));
 				valide = true;
 			    }
 			    else{
-				buffer = (byte[])raster.getDataElements(offset, raw, width-offset, 1, null);
+				buffer = UDPImageDatagram.createImageDatagram(89, 1, 
+					     width*height, offset, (byte[])raster.getDataElements(offset, raw, width-offset, 1, null));
 				valide = false;
 			    }
-			
 			    if( valide )
 				offset += w_3;
 			    else
