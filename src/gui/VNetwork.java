@@ -59,9 +59,6 @@ public class VNetwork extends JPanel{
      * @param string to add
      */
     public void add(String s){
-	if( model.size() >= max_size ){
-	    model.removeElementAt(0);
-	}
 	model.addElement(s);
     }
 
