@@ -1,6 +1,6 @@
 package parser;
 
-public class UDPHelloDatagram implements UDPDatagram
+public class UDPHelloDatagram
 {
     /**
      * Creates a new Hello datagram. This datagram will be the first message sent 
