@@ -1,4 +1,5 @@
 import parser.*;
+import utils.*;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -9,6 +10,7 @@ public class TestUDPDatagram
     {
 	int file_index = 5;
 	short opcode   = Opcode.NEGO_BASE;
+	short opcode2 = Opcode.DOWNLOAD;
 	int delay      = 500;
 	int width      = 600;
 	int height     = 300;
@@ -18,7 +20,7 @@ public class TestUDPDatagram
 							  delay,      //delay
 							  width,      //width
 							  height);    //height
-	System.out.println("Expected output:");
+	/*System.out.println("Expected output:");
 	System.out.println("opcode: "+Opcode.NEGO_BASE);
 	System.out.println("file_index: "+file_index);
 	System.out.println("is nego: true");
@@ -102,5 +104,47 @@ public class TestUDPDatagram
 	    System.out.println("fragment == image's fragment");
 	else
 	    System.out.println("fragment != image's fragment");
+	*/
+	// Bat's test
+	// Attention, pour que le test marche, il faut modifier la visibilité de la méthode ci-dessous !!
+	//byte[] downBArray = UDPDatagramHeader.createUDPDatagramHeader(file_index, opcode2);
+	//System.out.println("opcode2 is a download datagram => "+UDPDatagramHeader.isDownloadDatagram(downBArray));
+	//System.out.println("header is => "+UDPDatagramHeader.getFileIndex(downBArray));
+
+	short tmp = Opcode.DOWNLOAD;
+	System.out.println(tmp);
+	byte[] tmpByte = ArrayManipulator.short2ByteArray(tmp);
+	System.out.println("tmp => "+ArrayManipulator.byteArray2Short(tmpByte));
+
+	int tmp2 = 18;
+	System.out.println(tmp2);
+	byte[] tmp2Byte = ArrayManipulator.int2ByteArray(tmp2);
+	System.out.println("tmp2 => "+ArrayManipulator.byteArray2Int(tmp2Byte));
+
+	byte[] tmpDown = UDPDownloadDatagram.createDownloadDatagram(file_index, 7866);
+	ByteBuffer tmpDownBuffer = ByteBuffer.wrap(tmpDown);
+	for( int i=0;i<tmpDownBuffer.limit();i++)
+	    System.out.print(tmpDownBuffer.get(i));
+	System.out.println();
+	System.out.println("Image number => "+UDPDownloadDatagram.getImageNumber(tmpDown));
+
+	int y = 8327;
+	System.out.println("\nNumber "+y);
+	byte[] yByte = ByteBuffer.allocate(4).putInt(y).array(); 
+	for(int i=0;i<4;i++)
+	    System.out.print(yByte[i]);
+	System.out.println();
+	System.out.println(ByteBuffer.wrap(yByte).order(ByteOrder.LITTLE_ENDIAN).getInt());
+	
+	byte[] tmpImage = UDPImageDatagram.createImageDatagram(5, 89, 500, 98, yByte);
+	System.out.println("Image number =>"+UDPImageDatagram.getImageNumber(tmpImage));
+	System.out.println("Image size =>"+UDPImageDatagram.getImageSize(tmpImage));
+	System.out.println("Image offset =>"+UDPImageDatagram.getOffset(tmpImage));	
+	System.out.println("Image fragment =>"+ByteBuffer.wrap(UDPImageDatagram.getFragment(tmpImage)).getInt());	
     }
 }
+
+
+
+
+
