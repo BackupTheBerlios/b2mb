@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,12 +13,18 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
+import parser.ResultSet;
+import controller.GuiController;
+
 
 /**
  * Graphical component which represents the search main window
  * @author B2MB
  */
 public class VSearch extends JPanel{
+    private GuiController controller;
+    private ResultSet resultSet;
+    
     /**
      * Creates VSearch component
      */
@@ -34,14 +42,24 @@ public class VSearch extends JPanel{
 	add(bottom, BorderLayout.CENTER);
     }
     
+    /**
+     * Sets the controller.
+     * @param controller the needed controller.
+     */
+    public void setController(GuiController controller)
+    { this.controller = controller; }
+    
+    
     /**************************************************************/
     /**
      * Graphical component which represents the search top component
      * @author B2MB
      */
-    private static class VTopSearchComponent extends JPanel{
+    private class VTopSearchComponent extends JPanel{
 	private GridBagLayout layout;
 	private GridBagConstraints constraints;
+	private JButton search;
+	private JTextField searchField;
 
 	/**
 	 * Construcsts a VTopSearchComponent 
@@ -51,9 +69,24 @@ public class VSearch extends JPanel{
 	    constraints = new GridBagConstraints(); 
 	    
 	    setLayout(layout);
+	    this.search = new JButton("Search");
+	    this.searchField = new JTextField(20);
+	    
+	    search.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent event){
+		    if(controller == null) System.out.println("controller est null");
+		    if(searchField == null) System.out.println("searchField est null");
+		    
+		    String content = searchField.getText();
+		    if(content == null) System.out.println("content est null");
+		    if(content != null && !content.equals(""))
+			resultSet = controller.search(content);
+		}
+	    });
+	    
 	    //addComponent(new JLabel("Search"), 0, 0, 1, 1);
-	    addComponent(new JTextField(20),0,0,1,1);
-	    addComponent(new JButton("Search"), 0, 1, 1, 1);
+	    addComponent(searchField,0,0,1,1);
+	    addComponent(search, 0, 1, 1, 1);
 	    addComponent(new JButton("Download"), 0, 2, 1, 1);
 	}
 	

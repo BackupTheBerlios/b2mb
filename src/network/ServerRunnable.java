@@ -31,6 +31,7 @@ public class ServerRunnable implements Runnable
 		synchronized(this.server_socket){
 		    socket = this.server_socket.accept();
 		}//...synchronized
+		socket.setSoTimeout(1000);
 		this.performer.perform(socket);
 	    }//...try
 	    catch(SocketException se)

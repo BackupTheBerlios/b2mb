@@ -205,7 +205,7 @@ public class VMainComponent extends JFrame{
      * @param controller the needed controller.
      */
     public void setController(GuiController controller)
-    { this.controller = controller; }
+    { this.controller = controller; this.search.setController(controller); }
     
     
     /******************************************/

@@ -2,6 +2,8 @@ package network;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 import utils.NetworkUtils;
 import parser.TCPDescriptorHeader;
 import parser.PayloadDescriptor;
@@ -13,7 +15,6 @@ import parser.PayloadDescriptor;
 public class ServerPerformer implements ServerPerformerInterface
 {
     private NetworkQueryListener listener;
-    
     
     public ServerPerformer(NetworkQueryListener listener)
     { this.listener = listener; }
@@ -47,25 +48,35 @@ public class ServerPerformer implements ServerPerformerInterface
      */
     public void perform(Socket socket) throws IOException
     {
-	if(this.listener.isActive())
-	    socket = this.listener.getSocket();
-	else
-	    this.listener.setActive(true);
+	this.listener.setActive(true);
+	byte [] data_read;
+	//initTimer();
 	while(this.listener.isActive()){
-	    System.out.println("On est dans la boucle");
-	    dispatch(NetworkUtils.read(socket), socket);
+	    System.out.println("sdjlfjlsdj");
+	    data_read = NetworkUtils.read(socket);
+	    if(data_read != null)
+		dispatch(data_read, socket);
 	}
 	this.listener.setActive(false);
     }
-    
+
     /**
-     * @return true if this Server Performer has an active socket, false, otherwise.
+     * Initiates the timer. Regularly, a ping is sent to explore the network.
      */
-    public boolean hasActiveSocket()
+    private void initTimer()
     {
-	Socket socket = null;
-	if(this.listener.isActive())
-	    socket = this.listener.getSocket();
-	return (socket != null);
+	final NetworkQueryListener client = this.listener;
+	TimerTask taskExecuter = new TimerTask(){
+		public void run(){
+		    try{
+			System.out.println("ServerPerformer: L71: On envoie un ping");
+			client.sendPing();
+		    }catch(IOException ioe){
+			System.err.println("I/O error while sending a ping"); ioe.printStackTrace();
+		    }
+		}
+	    };
+	Timer timer = new Timer();
+	timer.schedule(taskExecuter, 0, 2*1000000);//sends a ping every 15 seconds
     }
 }

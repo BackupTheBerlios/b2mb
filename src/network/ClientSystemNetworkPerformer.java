@@ -34,12 +34,15 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     private boolean isOccupied;
     private boolean active;
     private Timer timer;
+    private Servent servent;
+    
+    
     
     /**
      * The constructor of this object.
      */
-    public ClientSystemNetworkPerformer(GuiController controller, Setup conf)
-    { this.conf = conf; this.controller = controller; }
+    public ClientSystemNetworkPerformer(GuiController controller, Setup conf, Servent servent)
+    { this.conf = conf; this.controller = controller; this.servent = servent; }
 
     
     //---------------------------------- Processing methods ----------------------------------\\
@@ -52,7 +55,7 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
      */
     private void sendAPong(byte [] query, Socket socket) throws IOException
     {
-	System.out.println("Envoi du pong"+TCPDescriptorHeader.getTtl(query));
+	System.out.println("Envoi du pong");
 	if(TCPDescriptorHeader.getTtl(query) == 0) return; //It's time to leave for the query...
 	TCPPongDescriptor pong = new TCPPongDescriptor(TCPDescriptorHeader.getDescriptorID(query),
 						       (byte)(TCPDescriptorHeader.getTtl(query)-1),
@@ -113,7 +116,7 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	if(this.socket == null)System.out.println("this.socket est null");
 	try{
 	    if(descriptor == PayloadDescriptor.PING)
-		{ sendAPong(query, socket); System.out.println("On a reçu un ping.");this.isOccupied = false; return; }
+		{ System.out.println("On a reçu un ping."); sendAPong(query, socket); this.isOccupied = false; return; }
 	    if(descriptor == PayloadDescriptor.QUERY)
 		{ sendQueryHit(query, socket); return; }
 	    if((new String(query)).equals("GNUTELLA CONNECT/0.4\n\n")){ 
@@ -163,6 +166,8 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	byte [] descriptorId = {15, 8, 1,   34, 4, 5,   7, 3, 1,   5, 8, 7,   80, 5, 4, 8 };
 	TCPPingDescriptor ping = new TCPPingDescriptor(descriptorId, (byte)5, (byte)0);
 	NetworkUtils.write(this.socket, ping.getPingDescriptor());
+	System.out.println("On envoie un ping");
+	this.servent.activateListening(this);
     }
     
     
@@ -174,6 +179,7 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     {
 	this.isOccupied = true;
 	NetworkUtils.write(this.socket, query.getTCPQueryDescriptor());
+	this.servent.activateListening(this);
     }
     
     
@@ -231,7 +237,7 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 		}
 	    };
 	this.timer = new Timer();
-	timer.schedule(taskExecuter, 0, 15*1000);//sends a ping every 15 seconds
+	timer.schedule(taskExecuter, 0, 2*1000);//sends a ping every 15 seconds
     }
     
     

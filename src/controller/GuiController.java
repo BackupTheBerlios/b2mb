@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.ArrayList;
+import java.io.IOException;
 import javax.swing.JTabbedPane;
 import gui.VMainComponent;
 import gui.*;
@@ -63,7 +64,7 @@ public class GuiController{
      * @return null if nothing corresponds
      */
     public ResultSet searchFiles(String s){
-	return ((VShared)tab.getComponentAt(4)). searchFiles(s);
+	return ((VShared)tab.getComponentAt(4)).searchFiles(s);
     }
     
     /*************************************************/
@@ -101,8 +102,23 @@ public class GuiController{
     }
 
     /*************************************************/
-    
+    // From VSearch
+    /**
+     * Activates the search for a file.
+     * @return the result set.
+     */
+    public ResultSet search(String content)
+    {
+	try{
+	    ResultSet results;
+	    this.servent.sendQuery(content);
+	    for(int i=0; i<80; i++) {
+		if((results = this.servent.getSearchResults())!=null)
+		    return results;
+		try{ Thread.sleep(500); } catch(InterruptedException ie){}
+	    }
+	}catch(IOException ioe){ioe.printStackTrace();}
+	return null;
+    }
     
 }
-
-

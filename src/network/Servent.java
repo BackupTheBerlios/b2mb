@@ -1,6 +1,7 @@
 package network;
 
 import configuration.Setup;
+import parser.ResultSet;
 import parser.TCPQueryDescriptor;
 import controller.GuiController;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.ListIterator;
 import java.net.Socket;
 import java.net.InetAddress;
@@ -21,6 +23,9 @@ public class Servent
     private Vector knownPeers;
     private Setup configuration;
     private GuiController controller;
+    private Hashtable listClientsServers;
+    private ResultSet resultSet;
+    
     
     
     private ServerPerformerInterface [] initPerformers(String config_file_name) throws IOException
@@ -30,10 +35,13 @@ public class Servent
 	//allocation
 	ServerPerformerInterface [] performers = new ServerPerformerInterface[nbproc];
 	this.clientSystem  = new ClientSystemNetworkPerformer[nbproc];
+	this.listClientsServers = new Hashtable();
 	//initialisation
 	for(int i=0; i<clientSystem.length; i++){
-	    this.clientSystem[i]  = new ClientSystemNetworkPerformer(controller, this.configuration);
+	    this.clientSystem[i] =
+		new ClientSystemNetworkPerformer(controller, this.configuration, this);
 	    performers[i] = new ServerPerformer(this.clientSystem[i]);
+	    this.listClientsServers.put(this.clientSystem[i], performers[i]);
 	}
 	return performers;
     }
@@ -94,16 +102,7 @@ public class Servent
 	    this.clientSystem[i].setActive(false);
 	System.out.println("Disconnected.");
     }
-    
-    
-    /**
-     * Searches buddies in the P2P network. Initiates the ping pong protocol.
-     */
-    public void searchPeers()
-    {
-	
-    }
-
+        
     private int getUnoccupiedClient()
     {
 	int i;
@@ -114,9 +113,11 @@ public class Servent
 	    return i;
 	return -1;
     }
-    
-    public void sendQuery(Socket socket, String search_criteria) throws IOException
+        
+    public void sendQuery(String search_criteria) throws IOException
     {   /* A MODIFIER */
+	System.out.println("recherche!!");
+	this.resultSet = null; //initialisation of the result set
 	byte [] descriptor_id = {12, 4, 5,  8, 1, 6,  5, 7, 8,  6, 4, 0,  5, 88, 56, 4};
 	TCPQueryDescriptor query = new TCPQueryDescriptor(descriptor_id, (byte)10, (byte)0,
 							  (short)10,   /* A MODIFIER */
@@ -128,6 +129,13 @@ public class Servent
 	    System.err.println("Servent did not send your query: all the clients were occupied.");
     }
     
+    /**
+     * @return true if the given address is not already used.
+     */
+    private boolean isNonUsedAddress(String address)
+    {
+	
+    }
     
     /**
      * @return the list of all the known addresses.
@@ -142,7 +150,7 @@ public class Servent
 	    String localAddress = InetAddress.getLocalHost().getHostAddress();
 	    
 	    while((address=in.readLine())!= null){
-		if(!address.equals(localAddress))
+		if(!address.equals(localAddress)&&isNonUsedAddress(address))
 		    addressList.add(address);
 	    }
 	    in.close();
@@ -177,4 +185,25 @@ public class Servent
 	    }
 	return false;
     }
+    
+    
+    /**
+     * When a client sends a query, it must ask to his server to listen for a response.
+     */
+    protected void activateListening(ClientSystemNetworkPerformer client)
+    {
+	ServerPerformerInterface server =
+	    (ServerPerformerInterface)this.listClientsServers.get(client);
+	try{
+	    server.perform(client.getSocket());
+	}catch(IOException ioe)
+	    { System.err.println(ioe.getMessage()); ioe.printStackTrace(); }
+    }
+    
+    
+    /**
+     * Returns the result of a previous search.
+     */
+    public ResultSet getSearchResults()
+    { return this.resultSet; }
 }

@@ -42,18 +42,21 @@ public class NetworkUtils
      * Reads in the given socket in order to extract from it a byte array.
      * It only reads at most the 1024 first bytes.
      * @param socket the socket in which the client must listen.
-     * @return the byte array read.
+     * @return the byte array read, null if EOF was reached.
      * @exception IOException if an error occured.
      */
     public static byte [] read(Socket socket) throws IOException
     {
 	InputStream in = socket.getInputStream();
 	byte [] array = new byte[1024];
-	int nb_bytes_read = in.read(array);
-	if(nb_bytes_read<=0)throw new IOException("Incorrect number of bytes: "+nb_bytes_read);
-	byte [] returned_array = new byte[nb_bytes_read];
-	ArrayManipulator.copyArray(returned_array, array, 0);
-	return returned_array;
+	try{
+	    int nb_bytes_read = in.read(array);
+	    if(nb_bytes_read<=0) return null;
+	    byte [] returned_array = new byte[nb_bytes_read];
+	    ArrayManipulator.copyArray(returned_array, array, 0);
+	    return returned_array;
+	}catch(java.net.SocketTimeoutException ste){}
+	return null;
     }
     
     /**
@@ -61,7 +64,7 @@ public class NetworkUtils
      * It only reads at most the 1024 first bytes of the input stream.
      * @param socket the socket in which the client must listen.
      * @param dummy a dummy parameter that isn't used.
-     * @return the string read.
+     * @return the string read, null if EOF was reached.
      * @exception IOException if an error occured.
      */
     public static String read(Socket socket, int dummy) throws IOException
@@ -69,6 +72,7 @@ public class NetworkUtils
 	InputStream in = socket.getInputStream();
 	byte [] array = new byte[1024];
 	int nb_bytes_read = in.read(array);
+	if(nb_bytes_read<=0) return null;
 	byte [] returned_array = new byte[nb_bytes_read];
 	ArrayManipulator.copyArray(returned_array, array, 0);
 	return new String(returned_array);
