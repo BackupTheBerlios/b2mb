@@ -71,10 +71,10 @@ public class ServentLinear extends Container{
 	client.start();
     }
 
-    public void stopClient(){
-	image = null;
-	client.stop();
-    }
+    /*public void stopClient(){
+      image = null;
+      client.stop();
+      }*/
 
     public void startServer(final String fileName){
 	(new Thread(new Runnable(){
@@ -87,19 +87,14 @@ public class ServentLinear extends Container{
 			DatagramPacket packet = new  DatagramPacket(buffer, 2, InetAddress.getLocalHost(), 50000); 
 
 			BufferedImage image = ImageIO.read(new File(fileName));
-			System.out.println("Width = "+image.getWidth()+"  Height = "+image.getHeight());
+			
 			// Scaling
 			AffineTransform scale = AffineTransform.getScaleInstance(width/(double)image.getWidth(), height/(double)image.getHeight());
-			//getShearInstance(2, 2);
 			AffineTransformOp scaleOp = new AffineTransformOp(scale, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			image = scaleOp.filter(image, null); 
 			
 			Raster raster = image.getData();
 
-			//int height = raster.getHeight();
-			//int width = raster.getWidth();
-			System.out.println("Width = "+image.getWidth()+"  Height = "+image.getHeight());
-			
 			int raw = 0;
 			int offset = 0;
 			boolean valide = true;

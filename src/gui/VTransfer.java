@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 
 /************************************************************************
 NB : Status va contenir une JProgressBar
@@ -35,7 +36,8 @@ public class VTransfer extends JPanel{
 	add(main);
 
 	// TEST
-	add2Download(new String[] {"merco.jpg", "10Ko", "10.2.2.2", "30ms", "10Ko/s", "available"});
+	add2Download(new String[] {"Images/Merco.jpg", "10Ko", "10.2.2.2", "30ms", "10Ko/s", "available"});
+	add2Download(new String[] {"Images/linux.jpg", "10Ko", "10.2.2.2", "30ms", "10Ko/s", "available"});
     }
     
     /**
@@ -52,6 +54,17 @@ public class VTransfer extends JPanel{
      */ 
     public void add2Upload(Object[] o){
 	upload.add2table(o);
+    }
+
+    /**
+     * Adds a listener on the tables with a popupmenu
+     * Permits to switch at the given tab
+     * @param the tabbedpane to switch
+     * @param the index of the tab
+     */
+    public void addListener(JTabbedPane tabbedPane, int index){
+	upload.addListener(tabbedPane, index);
+	download.addListener(tabbedPane, index);
     }
 
     /*****************************************************************************/
@@ -92,6 +105,16 @@ public class VTransfer extends JPanel{
 	 */
 	public void add2table(Object[] o){
 	    table.addRow(o);
+	}
+	
+	/**
+	 * Adds a listener on the tables with a popupmenu
+	 * Permits to switch at the given tab
+	 * @param the tabbedpane to switch
+	 * @param the index of the tab
+	 */
+	public void addListener(JTabbedPane tabbedPane, int index){
+	    table.addListener(tabbedPane, index);
 	}
     }
 }

@@ -143,7 +143,8 @@ public class VMainComponent extends JFrame{
 	exit.setToolTipText("Exit the application");
 	exit.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
-		    System.exit(0);
+		    //System.exit(0);
+		    add2Log("OK sa marche");
 		}
 	    });
 	toolBar.add(exit);

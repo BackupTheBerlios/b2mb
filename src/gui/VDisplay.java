@@ -20,6 +20,8 @@ import javax.swing.JTextField;
 public class VDisplay extends JPanel{
     private ServentLinear servent;
     //private ServentLinearByTen servent;
+    // TMP
+    VButtonTest top;
     
     /**
      * Creates VDisplay component
@@ -27,12 +29,17 @@ public class VDisplay extends JPanel{
     VDisplay(){
 	setLayout(new BorderLayout());
 	
-	VButtonTest top = new VButtonTest();
+	top = new VButtonTest();
 	servent = new ServentLinear();
 	//servent = new ServentLinearByTen();
 	
 	add(top, BorderLayout.NORTH);
 	add(servent, BorderLayout.CENTER);
+    }
+
+    // TMP
+    public void setImage(String image){
+	top.setImage(image);
     }
 
     /**************************************************************/
@@ -109,6 +116,11 @@ public class VDisplay extends JPanel{
 	    constraints.anchor = GridBagConstraints.NORTH;
 	    layout.setConstraints(component, constraints);
 	    this.add(component);
+	}
+
+	// TMP
+	public void setImage(String image){
+	    fileField.setText(image);
 	}
     }
 }
