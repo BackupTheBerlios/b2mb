@@ -2,6 +2,7 @@ package network;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.io.IOException;
 
 /**
@@ -32,6 +33,8 @@ public class ServerRunnable implements Runnable
 		}//...synchronized
 		this.performer.perform(socket);
 	    }//...try
+	    catch(SocketException se)
+		{ System.err.println("socket exception: Connection may be closed at the other end."); }
 	    catch(IOException ioe){ ioe.printStackTrace(); }
 	    finally{
 		try{ socket.close(); System.out.println("La connexion a ete fermee."); }

@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import parser.TCPDescriptorHeader;
 import parser.TCPPongDescriptor;
 import parser.TCPPingDescriptor;
@@ -31,7 +33,7 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     private Socket socket;
     private boolean isOccupied;
     private boolean active;
-    
+    private Timer timer;
     
     /**
      * The constructor of this object.
@@ -50,6 +52,7 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
      */
     private void sendAPong(byte [] query, Socket socket) throws IOException
     {
+	System.out.println("Envoi du pong"+TCPDescriptorHeader.getTtl(query));
 	if(TCPDescriptorHeader.getTtl(query) == 0) return; //It's time to leave for the query...
 	TCPPongDescriptor pong = new TCPPongDescriptor(TCPDescriptorHeader.getDescriptorID(query),
 						       (byte)(TCPDescriptorHeader.getTtl(query)-1),
@@ -106,11 +109,11 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	byte descriptor = TCPDescriptorHeader.getPayloadDescriptor(query);
 	if(query == null)System.out.println("query est null");
 	if(socket == null)System.out.println("socket est null");
+	this.socket = socket;
 	if(this.socket == null)System.out.println("this.socket est null");
 	try{
-	    //if(this.socket != socket){ /*this.socket.close();*/ this.socket = socket; }
 	    if(descriptor == PayloadDescriptor.PING)
-		{ sendAPong(query, socket); this.isOccupied = false; return; }
+		{ sendAPong(query, socket); System.out.println("On a reçu un ping.");this.isOccupied = false; return; }
 	    if(descriptor == PayloadDescriptor.QUERY)
 		{ sendQueryHit(query, socket); return; }
 	    if((new String(query)).equals("GNUTELLA CONNECT/0.4\n\n")){ 
@@ -145,19 +148,20 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	String response = NetworkUtils.read(this.socket, 0);
 	System.out.println("Le client percevrait-il quelque chose? "+response);
 	
-	if(response.equals("GNUTELLA OK\n\n")){ this.socket = socket; return true; }
+	if(response.equals("GNUTELLA OK\n\n")){ this.socket = socket; initTimer(); return true; }
 	this.socket.close();
 	return false;
     }
     
-
+    
     /**
      * Sends a ping to a well-known peer.
-     * @param ping the ping datagram to be sent.
      */
-    public void sendPing(TCPPingDescriptor ping) throws IOException
+    public void sendPing() throws IOException
     {
 	this.isOccupied = true;
+	byte [] descriptorId = {15, 8, 1,   34, 4, 5,   7, 3, 1,   5, 8, 7,   80, 5, 4, 8 };
+	TCPPingDescriptor ping = new TCPPingDescriptor(descriptorId, (byte)5, (byte)0);
 	NetworkUtils.write(this.socket, ping.getPingDescriptor());
     }
     
@@ -182,13 +186,58 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     public boolean isOccupied()
     { return this.isOccupied; }
     
+    
     /**
      * @return true if this client is ready to proces or is processing.
      */
     public boolean isActive()
     { return this.active; }
     
-    
+    /**
+     * Sets the activity of this client: if <code>value</code> is true, this client
+     * is considered as active. Otherwise the client is considered as inactive, and
+     * its socket is closed.
+     */
     public void setActive(boolean value)
-    { this.active = value; }
+    {
+	this.active = value;
+	if(value == false){
+	    try{
+		this.isOccupied = false;
+		if(this.socket!=null)this.socket.close();
+		System.out.println("Client was killed");
+	    }catch(IOException ioe)
+		{ System.err.println("I/O Error while closing a socket."); ioe.printStackTrace(); }
+	}
+    }
+    
+    
+    //----------------------------- utility methods -----------------------------\\
+    
+
+    /**
+     * Initiates the timer. Regularly, a ping is sent to explore the network.
+     */
+    private void initTimer()
+    {
+	TimerTask taskExecuter = new TimerTask(){
+		public void run(){
+		    try{
+			System.out.println("ClientSystemNetworkPerformer: L222: On envoie un ping");
+			sendPing();
+		    }catch(IOException ioe){
+			System.err.println("I/O error while sending a ping"); ioe.printStackTrace();
+		    }
+		}
+	    };
+	this.timer = new Timer();
+	timer.schedule(taskExecuter, 0, 15*1000);//sends a ping every 15 seconds
+    }
+    
+    
+    /**
+     * Returns this client's socket.
+     */
+    public Socket getSocket()
+    { return this.socket; }
 }

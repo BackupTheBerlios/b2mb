@@ -13,4 +13,5 @@ public interface ServerPerformerInterface
      * Is destined to be used with the following classes: Server, ServerRunnable.
      */
     public void perform(Socket socket) throws IOException;
+    public boolean hasActiveSocket();
 }

@@ -159,6 +159,8 @@ public class VMainComponent extends JFrame{
 	exit.setToolTipText("Exit the application");
 	exit.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
+		    controller.disconnect();
+		    System.out.println("VMainComponent: on se déconnecte");
 		    System.exit(0);
 		}
 	    });

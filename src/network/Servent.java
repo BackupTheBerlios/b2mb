@@ -12,6 +12,7 @@ import java.util.Vector;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.net.Socket;
+import java.net.InetAddress;
 
 public class Servent
 {
@@ -54,6 +55,7 @@ public class Servent
 	this.knownPeers    = new Vector();
     }
     
+    
     /**
      * Sets the controller.
      * @param controller the needed controller.
@@ -90,6 +92,7 @@ public class Servent
     {
 	for(int i=0; i<clientSystem.length; i++)
 	    this.clientSystem[i].setActive(false);
+	System.out.println("Disconnected.");
     }
     
     
@@ -125,6 +128,7 @@ public class Servent
 	    System.err.println("Servent did not send your query: all the clients were occupied.");
     }
     
+    
     /**
      * @return the list of all the known addresses.
      */
@@ -135,8 +139,12 @@ public class Servent
 	try{
 	    BufferedReader in = new BufferedReader(new FileReader(file_name));
 	    String address;
-	    while((address=in.readLine())!= null)
-		addressList.add(address);
+	    String localAddress = InetAddress.getLocalHost().getHostAddress();
+	    
+	    while((address=in.readLine())!= null){
+		if(!address.equals(localAddress))
+		    addressList.add(address);
+	    }
 	    in.close();
 	}
 	catch(FileNotFoundException fnfe)

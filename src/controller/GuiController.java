@@ -96,6 +96,7 @@ public class GuiController{
      * Permits to display Disconnected message
      */
     public void disconnect(){
+	this.servent.killAllClients();
 	((VNetwork)tab.getComponentAt(0)).disconnect();
     }
 

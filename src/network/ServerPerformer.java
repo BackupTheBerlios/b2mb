@@ -26,9 +26,6 @@ public class ServerPerformer implements ServerPerformerInterface
     private void dispatch(byte [] query, Socket socket)
     {
 	byte descriptor = TCPDescriptorHeader.getPayloadDescriptor(query);
-	if(this.listener == null)System.out.println("listener est null");
-	if(query == null)System.out.println("query est null");
-	if(socket == null)System.out.println("socket est null");
 	switch(descriptor)
 	    {
 	    case(PayloadDescriptor.QUERYHIT):
@@ -50,10 +47,25 @@ public class ServerPerformer implements ServerPerformerInterface
      */
     public void perform(Socket socket) throws IOException
     {
-	this.listener.setActive(true);
+	if(this.listener.isActive())
+	    socket = this.listener.getSocket();
+	else
+	    this.listener.setActive(true);
 	while(this.listener.isActive()){
 	    System.out.println("On est dans la boucle");
 	    dispatch(NetworkUtils.read(socket), socket);
 	}
+	this.listener.setActive(false);
+    }
+    
+    /**
+     * @return true if this Server Performer has an active socket, false, otherwise.
+     */
+    public boolean hasActiveSocket()
+    {
+	Socket socket = null;
+	if(this.listener.isActive())
+	    socket = this.listener.getSocket();
+	return (socket != null);
     }
 }

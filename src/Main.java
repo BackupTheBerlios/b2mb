@@ -6,7 +6,6 @@ public class Main{
     public static void main(String[] args) throws Exception{
 	//VSplash splash = new VSplash();
 	//splash.setVisible(true);
-	System.out.println("blabla");
 	String setupFile;
 	if(args.length==1)
 	    setupFile = args[0];
