@@ -92,13 +92,15 @@ public class UDPImageDatagram
     /**
      * Returns the datagram's fragment (in the big endian order). Creates a new byte array and fill
      * it with the values of the fragment. This array's length is set to the fragment's length.
+     * @param the datagram
+     * @param the max limit of the fragment in the datagram
      */
-    public static byte[] getFragment(byte [] datagram)
+    public static byte[] getFragment(byte [] datagram, int max_limit)
     {
-	byte fragment[] = new byte[datagram.length-18];
+	byte fragment[] = new byte[max_limit-18];
 	int j = fragment.length - 1; // Minus 1 because it's a position
 
-	for(int i=18;i<datagram.length;i++)
+	for(int i=18;i<max_limit;i++)
 	    fragment[j--] = datagram[i];
 	
 	return fragment;
@@ -106,9 +108,11 @@ public class UDPImageDatagram
     
     /**
      * Returns the size of the fragment(in bytes).
+     * @param the datagram
+     * @param the max limit of the fragment in the datagram
      */
-    public static int getFragmentSize(byte [] datagram)
-    { return datagram.length - 18; }
+    public static int getFragmentSize(byte [] datagram, int max_limit)
+    { return max_limit - 18; }
 }
 
 
