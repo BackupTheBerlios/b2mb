@@ -2,12 +2,18 @@ package network;
 
 import java.net.Socket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import parser.TCPDescriptorHeader;
 import parser.TCPPongDescriptor;
 import parser.TCPPingDescriptor;
+import parser.TCPQueryDescriptor;
+import parser.TCPQueryHitDescriptor;
 import parser.PayloadDescriptor;
+import parser.ResultSet;
+import controller.GuiController;
 import utils.NetworkUtils;
 import configuration.Setup;
 
@@ -21,18 +27,23 @@ import configuration.Setup;
 public class ClientSystemNetworkPerformer implements NetworkQueryListener
 {
     private Setup conf;
+    private GuiController controller;
     
     
     /**
      * The constructor of this object.
      */
-    public ClientSystemNetworkPerformer(Setup conf)
-    { this.conf = conf; }
+    public ClientSystemNetworkPerformer(GuiController controller, Setup conf)
+    { this.conf = conf; this.controller = controller; }
+
+    
+    //---------------------------------- Processing methods ----------------------------------\\
     
     
     /**
      * Sends a PONG after receiving one, if the server is currently able to process the demand.
      * @param socket the socket which links this client to the other server.
+     * @param query the byte array that was received.
      */
     private void sendAPong(byte [] query, Socket socket) throws IOException
     {
@@ -58,6 +69,32 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
     }
     
     /**
+     * Sends a query hit to the peer connected by the socket.
+     * @param socket the socket which links this client to the other server.
+     * @param query the byte array that was received.
+     */
+    private void sendQueryHit(byte [] query, Socket socket)
+    {
+	TCPQueryDescriptor query_descriptor = new TCPQueryDescriptor(query);
+	String search_criteria = query_descriptor.getSearchCriteria();
+	ResultSet results = this.controller.searchFiles(search_criteria);
+	try{
+	    TCPQueryHitDescriptor query_hit_descriptor =/* A MODIFIER */
+		new TCPQueryHitDescriptor(TCPDescriptorHeader.getDescriptorID(query),
+					  (byte)10, (byte)0,
+					  (byte)results.size(), (short)9090,
+					  InetAddress.getLocalHost().getAddress(), 10,
+					  results, TCPDescriptorHeader.getDescriptorID(query));
+	    
+	    NetworkUtils.write(socket, query_hit_descriptor.getTCPQueryHitDescriptor());
+	}catch(UnknownHostException uhe)
+	    { uhe.printStackTrace(); }
+	catch(IOException ioe)
+	    { ioe.printStackTrace(); }
+    }
+    
+    
+    /**
      * Processes the query received by the server.
      * @param query the raw data that was received by the server.
      */
@@ -67,6 +104,8 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	try{
 	    if(descriptor == PayloadDescriptor.PING)
 		{ sendAPong(query, socket); return; }
+	    if(descriptor == PayloadDescriptor.QUERY)
+		{ sendQueryHit(query, socket); return; }
 	    if((new String(query)).equals("GNUTELLA CONNECT/0.4\n\n")){ 
 		System.out.println("Someone asks you to connect him/her to the P2P network"); 
 		sendWelcomeMessage(socket);
@@ -77,6 +116,9 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	    ioe.printStackTrace();
 	}
     }
+    
+    
+    //---------------------------------- Sending methods ----------------------------------\\
     
     
     /**
@@ -110,5 +152,16 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	
 	System.out.println("Le client écoute...");
 	byte [] array = NetworkUtils.read(socket);
+    }
+    
+
+    /**
+     * Sends a query.
+     * @param socket the socket which links the two peers.
+     * @param query the query datagram to be sent.
+     */
+    public void sendQuery(Socket socket, TCPQueryDescriptor query) throws IOException
+    {
+	NetworkUtils.write(socket, query.getTCPQueryDescriptor());
     }
 }

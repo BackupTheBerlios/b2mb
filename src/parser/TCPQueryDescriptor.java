@@ -41,7 +41,6 @@ public class TCPQueryDescriptor
      * @return the descriptor header
      */
     public TCPQueryDescriptor(byte [] descriptorID,
-			      byte payloadDescriptor,
 			      byte ttl, byte hops,
 			      
 			      short minSpeed, String searchCriteria)
@@ -54,7 +53,7 @@ public class TCPQueryDescriptor
 	
 	//creation of the array
 	this.queryDescriptor = TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID,
-									     payloadDescriptor,
+									     PayloadDescriptor.QUERY,
 									     ttl, hops,shift);
 	//initialisation
 	shift = TCPDescriptorHeader.getHeaderLength();

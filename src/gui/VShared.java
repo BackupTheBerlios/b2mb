@@ -1,7 +1,7 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -21,6 +22,8 @@ import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import parser.Result;
+import parser.ResultSet;
 
 /**
  * Graphical component which represents the shared files
@@ -31,6 +34,7 @@ public class VShared extends JPanel{
     private DefaultMutableTreeNode root;
     private JScrollPane scrollTree;
     private JPopupMenu popupMenu;
+    private HashMap index;
     
     /**
      * Creates Shared component
@@ -53,7 +57,7 @@ public class VShared extends JPanel{
 	rendering.setOpenIcon(null); // => Icon a rajouter 
 	tree.setCellRenderer(rendering);
 	tree.setShowsRootHandles(true);
-
+	
 	createPopupMenu();
 	
 	// Add
@@ -71,14 +75,39 @@ public class VShared extends JPanel{
      */
     public void scanDirectory(){
 	cleanRoot();
+	updateIndex();
 	scanDirectory(root, new File("Images")); // Path to change -> search it in the config file
 	((DefaultTreeModel)tree.getModel()).nodeStructureChanged(root);
+    }
+
+    /**
+     * Updates the indexes
+     */
+    private void updateIndex(){
+	index = new HashMap();
+	File[] all = (new File("Images")).listFiles(); // Path to change
+	for(int i=0;i<all.length;i++)
+	    index.put(new Integer(i+1), all[i].getName());
+    }
+
+    /**
+     * Search the key of a value in the index table
+     * @param element
+     * @return the key of the element if exists, -1 otherwise.
+     */
+    private int getKey(String element){
+	for(int i=1;i<=index.size();i++){
+	    String s = (String)index.get(new Integer(i));
+	    if( s.equals(element))
+		return i;
+	}
+	return -1;
     }
     
     /**
      * Permits to scan the a directory and add the files
-     * @param the root
-     * @param the directory 
+     * @param fileRoot
+     * @param directory the directory 
      */
     private void scanDirectory(DefaultMutableTreeNode fileRoot, File directory){
 	File[] all = directory.listFiles();
@@ -91,6 +120,26 @@ public class VShared extends JPanel{
 		scanDirectory(node, all[i]);
 	}
     }
+    
+    /**
+     * Returns the size of the directory, ie the sum of all the files contained in it.
+     */
+    private int getFileSize(DefaultMutableTreeNode root)
+    {
+	Enumeration e = root.depthFirstEnumeration();
+	int fileSize=0;
+	String name;
+	File file;
+	while(e.hasMoreElements())
+	    {
+		name = (String)e.nextElement();
+		file = new File(VMainComponent.setup.getPath()+name);
+		if(!file.isDirectory())
+		    fileSize += file.length();
+	    }
+	return fileSize;
+    }
+    
     /*******************************************************************/
     /**
      * Permits to get the list of files from a specified file name
@@ -122,21 +171,22 @@ public class VShared extends JPanel{
      * @return a list of file names
      * @return null if nothing corresponds
      */
-    public ArrayList searchFiles(String s){
-	ArrayList names = new ArrayList();
+    public ResultSet searchFiles(String s){
+	ResultSet names = new ResultSet();
 	
 	Enumeration e = root.children();
 	
 	DefaultMutableTreeNode node = null;
 	while(e.hasMoreElements()){
 	    node = (DefaultMutableTreeNode)e.nextElement();
-	    if( ((String)node.getUserObject()).lastIndexOf(s) != -1 )
-		names.add(node.getUserObject());
+	    String nodeName = (String)node.getUserObject();
+	    if( ((String)node.getUserObject()).lastIndexOf(s) != -1 ){
+		int fileIndex = getKey(nodeName);
+		int fileSize  = getFileSize(node);
+		names.addResult(new Result(fileIndex, fileSize, nodeName));
+	    }
 	}
-
-	if( names.size() != 0 )
-	    return names;
-	else return null;
+	return names;
     }
 
     /*******************************************************************/

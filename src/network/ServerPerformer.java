@@ -30,6 +30,10 @@ public class ServerPerformer implements ServerPerformerInterface
 	    {
 	    case(PayloadDescriptor.QUERYHIT):
 		/* Faudrait appeler l'objet intéressé par un queryhit */
+		System.out.println("Le serveur a reçu un queryhit");
+		break;
+	    case(PayloadDescriptor.PONG):
+		System.out.println("Le serveur a reçu un pong");
 		break;
 	    default:
 		this.listener.processQuery(query, socket);

@@ -44,7 +44,6 @@ public class TCPQueryHitDescriptor
      * network. This is typically some function of the servent’s network address.
      */
     public TCPQueryHitDescriptor(byte [] descriptorID,
-				 byte payloadDescriptor,
 				 byte ttl, byte hops,
 				 
 				 byte nbOfHits, short port,
@@ -55,7 +54,7 @@ public class TCPQueryHitDescriptor
 	byte [] resultSetArray  = resultSet.resultSet2ByteArray();
 	int payloadLength = resultSetArray.length + 7 + ipAddress.length + serventIdentifier.length;
 	this.queryHitDescriptor = TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID,
-										payloadDescriptor,
+										PayloadDescriptor.QUERYHIT,
 										ttl, hops,
 										payloadLength);
 	int shift = TCPDescriptorHeader.getHeaderLength();

@@ -3,6 +3,7 @@ package controller;
 import java.util.ArrayList;
 import javax.swing.JTabbedPane;
 import gui.*;
+import parser.ResultSet;
 
 /**
  * This class regroups all the methods contained in all the VComponents. 
@@ -58,7 +59,7 @@ public class GuiController{
      * @return a list of file names
      * @return null if nothing corresponds
      */
-    public ArrayList searchFiles(String s){
+    public ResultSet searchFiles(String s){
 	return ((VShared)tab.getComponentAt(4)). searchFiles(s);
     }
     

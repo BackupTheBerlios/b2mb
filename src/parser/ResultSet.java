@@ -87,4 +87,11 @@ public class ResultSet
 	    }
 	return returnedArray;
     }
+    
+    
+    /**
+     * @return the number of elements in the ResultSet.
+     */
+    public int size()
+    { return this.resultSet.size(); }
 }
