@@ -21,4 +21,32 @@ public class Opcode
      */
     public static boolean isNego(short opcode)
     { return (opcode>=0x0001)&&(opcode<=0x09FF); }
+
+    /**
+     * Tells if the given opcode is a hello opcode.
+     * @return true if the given opcode is a hello opcode, false otherwise.
+     */
+    public static boolean isHello(short opcode)
+    { return (opcode == HELLO); }
+    
+    /**
+     * Tells if the given opcode is a download opcode.
+     * @return true if the given opcode is a download opcode, false otherwise.
+     */
+    public static boolean isDownload(short opcode)
+    { return (opcode == DOWNLOAD); }
+
+    /**
+     * Tells if the given opcode is a image opcode.
+     * @return true if the given opcode is a image opcode, false otherwise.
+     */
+    public static boolean isImage(short opcode)
+    { return (opcode == IMAGE); }
 }
+
+
+
+
+
+
+
