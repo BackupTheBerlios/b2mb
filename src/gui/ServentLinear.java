@@ -83,14 +83,7 @@ public class ServentLinear extends Container{
 			File f = new File(fileName);
 			ImageInputStream input = ImageIO.createImageInputStream(f);
 			Iterator it = ImageIO.getImageReadersByFormatName("gif");
-
-			int i = 1;
-
-			ImageReader reader = (ImageReader)it.next();
-			reader.setInput(input, true);
-			System.out.println(reader.getNumImages(false));
-			System.exit(1);
-
+			
 			BufferedImage image = ImageIO.read(new File(fileName));
 			
 			// Scaling
