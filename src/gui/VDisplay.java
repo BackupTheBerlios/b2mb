@@ -18,7 +18,8 @@ import javax.swing.JTextField;
  * @author B2MB
  */
 public class VDisplay extends JPanel{
-    private ServentLinear servent;
+    //private ServentLinear servent;
+    private ServentLinearBuffer servent;
     //private ServentLinearByTen servent;
     // TMP
     VButtonTest top;
@@ -30,7 +31,8 @@ public class VDisplay extends JPanel{
 	setLayout(new BorderLayout());
 	
 	top = new VButtonTest();
-	servent = new ServentLinear();
+	//servent = new ServentLinear();
+	servent = new ServentLinearBuffer();
 	//servent = new ServentLinearByTen();
 	
 	add(top, BorderLayout.NORTH);
