@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import parser.TCPDescriptorHeader;
 import parser.TCPPongDescriptor;
+import parser.TCPPingDescriptor;
 import parser.PayloadDescriptor;
 import utils.NetworkUtils;
 import configuration.Setup;
@@ -20,13 +21,6 @@ import configuration.Setup;
 public class ClientSystemNetworkPerformer implements NetworkQueryListener
 {
     private Setup conf;
-    
-    
-    private boolean ok;
-    public void setOK(boolean val)
-    { ok=val; }
-    public boolean getOK()
-    { return ok; }
     
     
     /**
@@ -50,7 +44,6 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 						       InetAddress.getLocalHost().getAddress(),
 						       0, 0);
 	NetworkUtils.write(socket, pong.getTCPPongDescriptor());
-	ok=true;
     }    
     
     /**
@@ -83,5 +76,39 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
 	    System.err.println("I/O Error in ClientSystemNetworkPerformer L62"); 
 	    ioe.printStackTrace();
 	}
+    }
+    
+    
+    /**
+     * Asks to well-known peer if this servent can connect to the P2P network, via that remote
+     * peer.
+     * @param socket the socket which links the two peers.
+     * @return true if the connection was accepted, false otherwise.
+     */
+    public boolean sendDemand2Connect(Socket socket) throws IOException
+    {
+	System.out.println("Le client lance un bonjour dans la toile");
+	NetworkUtils.write(socket, "GNUTELLA CONNECT/0.4\n\n");
+	
+	System.out.println("Le client écoute...");
+	String response = NetworkUtils.read(socket, 0);
+	System.out.println("Le client percevrait-il quelque chose? "+response);
+	
+	if(response.equals("GNUTELLA OK\n\n"))return true;
+	return false;
+    }
+    
+
+    /**
+     * Sends a ping to a well-known peer.
+     * @param socket the socket which links the two peers.
+     * @param ping the ping datagram to be sent.
+     */
+    public void sendPing(Socket socket, TCPPingDescriptor ping) throws IOException
+    {
+	NetworkUtils.write(socket, ping.getPingDescriptor());
+	
+	System.out.println("Le client écoute...");
+	byte [] array = NetworkUtils.read(socket);
     }
 }

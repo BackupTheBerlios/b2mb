@@ -44,9 +44,7 @@ public class ServerPerformer implements ServerPerformerInterface
     public void perform(Socket socket)
     {
 	try{
-	    listener.setOK(false);
-	    while(!listener.getOK())
-		dispatch(NetworkUtils.read(socket), socket);
+	    dispatch(NetworkUtils.read(socket), socket);
 	}catch(IOException ioe){ ioe.printStackTrace(); }
     }
 }

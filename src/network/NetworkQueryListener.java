@@ -2,6 +2,8 @@ package network;
 
 import java.util.EventListener;
 import java.net.Socket;
+import parser.TCPPingDescriptor;
+import java.io.IOException;
 
 /**
  * This interface should be implemented by the client that processes
@@ -10,6 +12,6 @@ import java.net.Socket;
 public interface NetworkQueryListener extends EventListener
 {
     public void processQuery(byte [] descriptor, Socket socket);
-    public void setOK(boolean val);
-    public boolean getOK();
+    public boolean sendDemand2Connect(Socket socket) throws IOException;
+    public void sendPing(Socket socket, TCPPingDescriptor ping) throws IOException;
 }
