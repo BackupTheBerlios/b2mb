@@ -65,13 +65,14 @@ public class VMainComponent extends JFrame{
 	
 	// Menu
 	//initMenuBar();
-	
+	controller = new GuiController();
 	// Create JTabbPane with a default tab placement of JTabbedPane.TOP
 	tabbedPane = new JTabbedPane();
+	controller.setView(tabbedPane);
 	// And add all the tabs
 	initTabs();
 	// Init the controller
-	controller = new GuiController(tabbedPane);
+	
 	
 	// Toolbar
 	initToolBar();
@@ -162,7 +163,11 @@ public class VMainComponent extends JFrame{
 	exit.setToolTipText("Exit the application");
 	exit.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent event){
-		    System.exit(0);
+		    //System.exit(0);
+		    java.util.ArrayList l = controller.searchFiles("jpg");
+		    if( l != null )
+			for(int i=0;i<l.size();i++)
+			System.out.println(l.get(i));
 		}
 	    });
 	toolBar.add(exit);
