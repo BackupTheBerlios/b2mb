@@ -1,31 +1,13 @@
 package parser;
 
+import utils.ArrayManipulator;
+
 import java.security.InvalidParameterException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class UDPImageDatagram
 {
-    /**
-     * Converts an int in a byte array in the little endian order.
-     * @return the converted int
-     */
-    private static byte[] int2ByteArray(int value)
-    {
-	ByteBuffer bb = ByteBuffer.allocate(4);
-	bb = (bb.putInt(value)).order(ByteOrder.LITTLE_ENDIAN);
-	return bb.array();
-    }
-    
-    /**
-     * Converts a byte array in an int in the little endian order.
-     * @return the int representing the array
-     */
-    private static int byteArray2Int(byte [] array)
-    { return (ByteBuffer.wrap(array)).getInt(); }
-    
-    
-    
     /**
      * Creates a new UDP image datagram. This datagram is the one that contains a fragment
      * of the sent image. Its size is limited to 1024.
@@ -48,28 +30,23 @@ public class UDPImageDatagram
 	if(fragment.length>1006)throw new InvalidParameterException("fragment length too important");
 	//1006+18 = 1024 = datagram max length
 	byte [] datagram = UDPDatagramHeader.createUDPDatagramHeader(file_index, Opcode.IMAGE, 18+fragment.length);
-	byte [] image_number_array = int2ByteArray(image_number);
-	byte [] image_size_array = int2ByteArray(image_size);
-	byte [] offset_array = int2ByteArray(offset);
+	byte [] image_number_array = ArrayManipulator.int2ByteArray(image_number);
+	byte [] image_size_array = ArrayManipulator.int2ByteArray(image_size);
+	byte [] offset_array = ArrayManipulator.int2ByteArray(offset);
 	int i; int shift = UDPDatagramHeader.getHeaderSize();
 	//initialisation
-	for(i=0; i<4; i++)
-	    datagram[i+shift] = image_number_array[i];
-	shift+=i;
-	for(i=0; i<4; i++)
-	    datagram[i+shift] = image_size_array[i];
-	shift+=i;
-	for(i=0; i<4; i++)
-	    datagram[i+shift] = offset_array[i];
-	shift+=i;
-	//copy the fragment in a temporary array to avoid messing up 'fragment'...
+	ArrayManipulator.copyArrayAtEnd(datagram, image_number_array, shift);
+	shift+=4;
+	ArrayManipulator.copyArrayAtEnd(datagram, image_size_array, shift);
+	shift+=4;
+	ArrayManipulator.copyArrayAtEnd(datagram, offset_array, shift);
+	shift+=4;
+	// copy the fragment in a temporary array (in the little endian order) to avoid messing up 'fragment'...
 	byte [] fragment_array = new byte[fragment.length];
+	int j = fragment.length - 1;
 	for(i=0; i<fragment.length; i++)
-	    fragment_array[i] = fragment[i];
-	//...then order in the little-endian way.
-	fragment_array = ByteBuffer.wrap(fragment_array).order(ByteOrder.LITTLE_ENDIAN).array();
-	for(i=0; i<fragment.length; i++)
-	    datagram[i+shift] = fragment_array[i];
+	    fragment_array[j--] = fragment[i];
+	ArrayManipulator.copyArrayAtEnd(datagram, fragment_array, shift);
 	return datagram;
     }
     
@@ -84,7 +61,7 @@ public class UDPImageDatagram
 				datagram[UDPDatagramHeader.getHeaderSize()+1], 
 				datagram[UDPDatagramHeader.getHeaderSize()+2], 
 				datagram[UDPDatagramHeader.getHeaderSize()+3] };
-	return byteArray2Int(image_number);
+	return ArrayManipulator.byteArray2Int(image_number);
     }
     
     /**
@@ -96,7 +73,7 @@ public class UDPImageDatagram
 			      datagram[UDPDatagramHeader.getHeaderSize()+5], 
 			      datagram[UDPDatagramHeader.getHeaderSize()+6], 
 			      datagram[UDPDatagramHeader.getHeaderSize()+7] };
-	return byteArray2Int(image_size);
+	return ArrayManipulator.byteArray2Int(image_size);
     }
     
     /**
@@ -109,18 +86,21 @@ public class UDPImageDatagram
 			  datagram[UDPDatagramHeader.getHeaderSize()+9], 
 			  datagram[UDPDatagramHeader.getHeaderSize()+10], 
 			  datagram[UDPDatagramHeader.getHeaderSize()+11] };
-	return byteArray2Int(offset);
+	return ArrayManipulator.byteArray2Int(offset);
     }
     
     /**
-     * Returns the datagram's fragment. Creates a new byte array and fill it with the
-     * values of the fragment. This array's length is set to the fragment's length.
+     * Returns the datagram's fragment (in the big endian order). Creates a new byte array and fill
+     * it with the values of the fragment. This array's length is set to the fragment's length.
      */
     public static byte[] getFragment(byte [] datagram)
     {
 	byte fragment[] = new byte[datagram.length-18];
-	for(int i=0; i<fragment.length; i++)
-	    fragment[i] = datagram[i+18];
+	int j = fragment.length - 1; // Minus 1 because it's a position
+
+	for(int i=18;i<datagram.length;i++)
+	    fragment[j--] = datagram[i];
+	
 	return fragment;
     }
     

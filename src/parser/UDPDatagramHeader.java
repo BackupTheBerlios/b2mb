@@ -28,7 +28,7 @@ public class UDPDatagramHeader
 	if(array_size<header_size)
 	    throw new InvalidParameterException("array_size must be greater than "+header_size+": "+array_size);
 	ByteBuffer bb = ByteBuffer.allocate(array_size);
-	bb = (bb.putInt(file_index).putShort(opcode)).order(ByteOrder.LITTLE_ENDIAN);
+	bb = bb.order(ByteOrder.LITTLE_ENDIAN).putInt(file_index).putShort(opcode);
 	return bb.array();
     }
     
@@ -42,7 +42,7 @@ public class UDPDatagramHeader
     protected static byte[] createUDPDatagramHeader(int file_index, short opcode)
     {
 	ByteBuffer bb = ByteBuffer.allocate(header_size);
-	bb = (bb.putInt(file_index).putShort(opcode)).order(ByteOrder.LITTLE_ENDIAN);
+	bb = bb.order(ByteOrder.LITTLE_ENDIAN).putInt(file_index).putShort(opcode);
 	return bb.array();
     }
     
@@ -55,9 +55,7 @@ public class UDPDatagramHeader
      */
     public static boolean isHelloDatagram(byte [] datagram)
     {
-	byte opcode[] = { datagram[header_size-2], datagram[header_size-1] };
-	ByteBuffer bb = ByteBuffer.wrap(opcode);
-	return (bb.getShort() == Opcode.HELLO);
+	return Opcode.isHello(getOpcode(datagram));
     }
     
     /**
@@ -67,9 +65,7 @@ public class UDPDatagramHeader
      */
     public static boolean isNegoDatagram(byte [] datagram)
     {
-	byte opcode[] = { datagram[header_size-2], datagram[header_size-1] };
-	ByteBuffer bb = ByteBuffer.wrap(opcode).order(ByteOrder.LITTLE_ENDIAN);
-	return Opcode.isNego(bb.getShort());
+	return Opcode.isNego(getOpcode(datagram));
     }
     
     /**
@@ -79,9 +75,7 @@ public class UDPDatagramHeader
      */
     public static boolean isDownloadDatagram(byte [] datagram)
     {
-	byte opcode[] = { datagram[header_size-2], datagram[header_size-1] };
-	ByteBuffer bb = ByteBuffer.wrap(opcode);
-	return (bb.getShort() == Opcode.DOWNLOAD);
+	return Opcode.isDownload(getOpcode(datagram));
     }
     
     /**
@@ -91,9 +85,7 @@ public class UDPDatagramHeader
      */
     public static boolean isImageDatagram(byte [] datagram)
     {
-	byte opcode[] = { datagram[header_size-2], datagram[header_size-1] };
-	ByteBuffer bb = ByteBuffer.wrap(opcode);
-	return (bb.getShort() == Opcode.IMAGE);
+	return Opcode.isImage(getOpcode(datagram));
     }
     
     
@@ -105,7 +97,7 @@ public class UDPDatagramHeader
      */
     public static short getOpcode(byte [] datagram)
     {
-	byte opcode[] = { datagram[header_size-2], datagram[header_size-1] };
+	byte opcode[] = { datagram[header_size-1], datagram[header_size-2] };
 	ByteBuffer bb = ByteBuffer.wrap(opcode);
 	return bb.getShort();
     }
@@ -117,7 +109,7 @@ public class UDPDatagramHeader
      */
     public static int getFileIndex(byte [] datagram)
     {
-	byte opcode[] = { datagram[0], datagram[1], datagram[2], datagram[3] };
+	byte opcode[] = { datagram[3], datagram[2], datagram[1], datagram[0] };
 	ByteBuffer bb = ByteBuffer.wrap(opcode);
 	return bb.getInt();
     }
