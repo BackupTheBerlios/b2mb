@@ -7,6 +7,6 @@ public class UDPHelloDatagram
      * by the client to the remote servent.
      * @param file_index the datagram's file index
      */
-    public static byte[] createNewHelloDatagram(int file_index)
+    public static byte[] createHelloDatagram(int file_index)
     { return UDPDatagramHeader.createUDPDatagramHeader(file_index, Opcode.HELLO); }
 }
