@@ -9,6 +9,7 @@ import utils.ArrayManipulator;
  * Gnutella protocol v0.4. Please refer to this protocol for more
  * precision.
  */
+/* fonctionne */
 public class TCPQueryDescriptor
 {
     private byte [] queryDescriptor;
@@ -39,36 +40,41 @@ public class TCPQueryDescriptor
      * given IP address and port is sharing on the network.
      * @return the descriptor header
      */
-    public TCPPongDescriptor(byte [] descriptorID,
-			     byte payloadDescriptor,
-			     byte ttl, byte hops,
-			     int payloadLength,
-			     
-			     short minSpeed, String searchCriteria)
+    public TCPQueryDescriptor(byte [] descriptorID,
+			      byte payloadDescriptor,
+			      byte ttl, byte hops,
+			      
+			      short minSpeed, String searchCriteria)
     {
-	int shift = TCPDescriptorHeader.getHeaderLength();
 	//conversion
-	byte [] minSpeedArray = ArrayManipulator.short2ByteArray(minSpeed);
-	byte [] searchCriteriaArray = searchCriteria.getBytes();
-	shift+=minSpeedArray.length+searchCriteriaArray.length;
+	byte [] minSpeedArray       = ArrayManipulator.short2ByteArray(minSpeed);
+	byte [] searchCriteriaArray
+	    = ByteBuffer.wrap(searchCriteria.getBytes()).order(ByteOrder.LITTLE_ENDIAN).array();
+	int shift                   = minSpeedArray.length+searchCriteriaArray.length;
 	
 	//creation of the array
 	this.queryDescriptor = TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID,
 									     payloadDescriptor,
-									     ttl, hops,
-									     payloadLength,
-									     shift);
+									     ttl, hops,shift);
 	//initialisation
-	int i;
 	shift = TCPDescriptorHeader.getHeaderLength();
-	for(i=0; i<minSpeedArray.length; i++)
-	    this.queryDescriptor[i+shift] = minSpeedArray[i];
-	shift+=i;
-	for(i=0; i<searchCriteriaArray.length; i++)
-	    this.queryDescriptor[i+shift] = searchCriteriaArray[i];
+	ArrayManipulator.copyArray(this.queryDescriptor, minSpeedArray, shift);
+	shift+=minSpeedArray.length;
+	ArrayManipulator.copyArray(this.queryDescriptor, searchCriteriaArray, shift);
     }
     
-
+    /**
+     * Creates a query descriptor with the given byte array. The latter is a query
+     * descriptor that was converted in byte array before transmission.
+     * This constructor should be called when receiving a TCP datagram, which is a 
+     * query descriptor.
+     * @param queryDescriptorAsArray a query descriptor as a byte array. Must be in 
+     * little-endian form.
+     */
+    public TCPQueryDescriptor(byte [] queryDescriptorAsArray)
+    { this.queryDescriptor = queryDescriptorAsArray; }
+    
+    
     /**
      * Returns the minimum speed (in kb/second) of servents that should
      * respond to this message. A servent receiving a Query descriptor with
@@ -77,12 +83,11 @@ public class TCPQueryDescriptor
      * @return the minimum speed (in kb/second) of servents that should
      * respond to this message.
      */
-    public short getMinspeed()
+    public short getMinSpeed()
     {
 	int shift = TCPDescriptorHeader.getHeaderLength();
 	byte [] array = new byte[2];
-	for(int i=0; i<array.length; i++)
-	    array[i] = this.queryDescriptor[i+shift];
+	ArrayManipulator.copyArray(array, this.queryDescriptor, shift);
 	return ArrayManipulator.byteArray2Short(array);
     }
 
@@ -95,9 +100,15 @@ public class TCPQueryDescriptor
     public String getSearchCriteria()
     {
 	int shift = TCPDescriptorHeader.getHeaderLength()+2;
-	byte [] array = new byte[this.queryDescriptor.length - 2];
-	for(int i=0; i<array.length; i++)
-	    array[i] = this.queryDescriptor[i+shift];
-	return new String(array);
+	byte [] array = new byte[this.queryDescriptor.length - shift];
+	ArrayManipulator.copyArray(array, this.queryDescriptor, shift);
+	return new String(ByteBuffer.wrap(array).order(ByteOrder.LITTLE_ENDIAN).array());
     }
+    
+    /**
+     * Returns this query descriptor as a byte array in Little Endian form.
+     * @return a query descriptor.
+     */
+    public byte [] getTCPQueryDescriptor()
+    { return this.queryDescriptor; }
 }

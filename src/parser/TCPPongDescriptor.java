@@ -9,6 +9,7 @@ import utils.ArrayManipulator;
  * Gnutella protocol v0.4. Please refer to this protocol for more
  * precision.
  */
+/* fonctionne */
 public class TCPPongDescriptor
 {
     private byte [] pongDescriptor;
@@ -41,7 +42,6 @@ public class TCPPongDescriptor
     public TCPPongDescriptor(byte [] descriptorID,
 			     byte payloadDescriptor,
 			     byte ttl, byte hops,
-			     int payloadLength,
 			     
 			     short port, byte [] ipAddress,
 			     int nbSharedFiles, int nbSharedKo)
@@ -49,27 +49,34 @@ public class TCPPongDescriptor
 	int shift = TCPDescriptorHeader.getHeaderLength();
 	this.pongDescriptor = TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID,
 									    payloadDescriptor,
-									    ttl, hops,
-									    payloadLength,
-									    shift+14);
+									    ttl, hops,14);
 	byte [] array = ArrayManipulator.short2ByteArray(port);
-	int i;
-	for(i=0; i<array.length; i++)
-	    this.pongDescriptor[i+shift] = array[i];
-	shift+=i;
-	for(i=0; i<ipAddress.length; i++)
-	    this.pongDescriptor[i+shift] = ipAddress[i];
+	ArrayManipulator.copyArray(this.pongDescriptor, array, shift);
+	
+	shift+=2;
+	ArrayManipulator.copyArray(this.pongDescriptor, ipAddress, shift);
+	
 	array = ArrayManipulator.int2ByteArray(nbSharedFiles);
-	shift+=i;
-	for(i=0; i<array.length; i++)
-	    this.pongDescriptor[i+shift] = array[i];
+	shift+=4;
+	ArrayManipulator.copyArray(this.pongDescriptor, array, shift);
+	
 	array = ArrayManipulator.int2ByteArray(nbSharedKo);
-	shift+=i;
-	for(i=0; i<array.length; i++)
-	    this.pongDescriptor[i+shift] = array[i];
+	shift+=4;
+	ArrayManipulator.copyArray(this.pongDescriptor, array, shift);
     }
     
-
+    /**
+     * Creates a pong descriptor with the given byte array. The latter is a pong
+     * descriptor that was converted in byte array before transmission.
+     * This constructor should be called when receiving a TCP datagram, which is a 
+     * pong descriptor.
+     * @param pongDescriptorAsArray a pong descriptor as a byte array. Must be in 
+     * little-endian form.
+     */
+    public TCPPongDescriptor(byte [] pongDescriptorAsArray)
+    { this.pongDescriptor = pongDescriptorAsArray; }
+    
+    
     /**
      * Returns the pong descriptor under the form of a byte array.
      * @return the converted pong descriptor.

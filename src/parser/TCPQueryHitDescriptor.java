@@ -18,7 +18,9 @@ public class TCPQueryHitDescriptor
     
     
     /**
-     * Creates a TCP query descriptor.
+     * Creates a TCP query hit descriptor.
+     * This constructor should be called before sending a query hit, when the creation of a
+     * query hit descriptor is needed.
      * @param descriptor_id A 16-byte string uniquely identifying the descriptor on the network
      * @param payload_descriptor Ping, Pong, Push, Query, QueryHit(defined in PayloadDescriptor.java)
      * @param ttl Time To Live. The number of times the descriptor will be forwarded by
@@ -46,21 +48,18 @@ public class TCPQueryHitDescriptor
     public TCPQueryHitDescriptor(byte [] descriptorID,
 				 byte payloadDescriptor,
 				 byte ttl, byte hops,
-				 int payloadLength,
 				 
 				 byte nbOfHits, short port,
 				 byte[]ipAddress, int speed,
-				 ArrayList resultSet, 
+				 ResultSet resultSet, 
 				 byte[]serventIdentifier)
     {
 	byte [] resultSetArray  = resultSet.resultSet2ByteArray();
-	int returnedArrayLength = TCPQueryHitDescriptor.getHeaderLength() +
-	    resultSetArray.length + 7 + ipAddress.length + serventIdentifier.length;
+	int payloadLength = resultSetArray.length + 7 + ipAddress.length + serventIdentifier.length;
 	this.queryHitDescriptor = TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID,
 										payloadDescriptor,
 										ttl, hops,
-										payloadLength,
-										returnedArrayLength);
+										payloadLength);
 	int shift = TCPDescriptorHeader.getHeaderLength();
 	this.queryHitDescriptor[shift] = nbOfHits; shift++;
 	ArrayManipulator.copyArray(this.queryHitDescriptor, ArrayManipulator.short2ByteArray(port), shift); shift+=2;
@@ -70,13 +69,22 @@ public class TCPQueryHitDescriptor
 	ArrayManipulator.copyArray(this.queryHitDescriptor, serventIdentifier, shift);
     }
     
+    /**
+     * Creates a query hit descriptor with the given query hit which is as a byte array.
+     * This constructor should be called when receiving a TCP datagram(after a query).
+     * @param queryHitInArray a query hit descriptor under the form of a byte array. It 
+     * must be in little-endian.
+     */
+    public TCPQueryHitDescriptor(byte [] queryHitInArray)
+    { this.queryHitDescriptor = queryHitInArray; }
+    
     
     /**
      * Returns the number of query hits in the result set.
      * @return the number of query hits in the result set.
      */
     public byte getNbOfHits()
-    { return this.queryHitDescriptor[TCPQueryHitDescriptor.getHeaderLength()]; }
+    { return this.queryHitDescriptor[TCPDescriptorHeader.getHeaderLength()]; }
     
     /**
      * Returns the port number on which the responding host can accept incoming connections.
@@ -85,8 +93,8 @@ public class TCPQueryHitDescriptor
     public short getPort()
     {
 	byte [] portArray = new byte[2];
-	portArray[0] = this.queryHitDescriptor[TCPQueryHitDescriptor.getHeaderLength()+1];
-	portArray[1] = this.queryHitDescriptor[TCPQueryHitDescriptor.getHeaderLength()+2];
+	portArray[0] = this.queryHitDescriptor[TCPDescriptorHeader.getHeaderLength()+1];
+	portArray[1] = this.queryHitDescriptor[TCPDescriptorHeader.getHeaderLength()+2];
 	return ArrayManipulator.byteArray2Short(portArray);
     }
     
@@ -98,19 +106,19 @@ public class TCPQueryHitDescriptor
     public byte [] getIPAddress()
     {
 	byte [] ipAddress = new byte[4];
-	int shift = TCPQueryHitDescriptor.getHeaderLength()+3;
+	int shift = TCPDescriptorHeader.getHeaderLength()+3;
 	ArrayManipulator.copyArray(ipAddress, this.queryHitDescriptor, shift);
 	return ipAddress;
     }
     
     /**
-     * Returns the speed (in kb/second) of the responding host.
-     * @return the speed (in kb/second) of the responding host.
+     * Returns the speed (in ko/second) of the responding host.
+     * @return the speed (in ko/second) of the responding host.
      */
     public int getSpeed()
     {
 	byte [] speed = new byte[4];
-	int shift = TCPQueryHitDescriptor.getHeaderLength()+7;
+	int shift = TCPDescriptorHeader.getHeaderLength()+7;
 	ArrayManipulator.copyArray(speed, this.queryHitDescriptor, shift);
 	return ArrayManipulator.byteArray2Int(speed);
     }
@@ -122,8 +130,9 @@ public class TCPQueryHitDescriptor
     public ListIterator getResultSetIterator()
     {
 	byte [] resultSetArray = new byte[this.queryHitDescriptor.length 
-					  -28-TCPQueryHitDescriptor.getHeaderLength()];
-	int shift = TCPQueryHitDescriptor.getHeaderLength()+11;
+					  -28-TCPDescriptorHeader.getHeaderLength()];
+	System.out.println("-->"+resultSetArray.length+"\tqhd: "+this.queryHitDescriptor.length);
+	int shift = TCPDescriptorHeader.getHeaderLength()+11;
 	ArrayManipulator.copyArray(resultSetArray, this.queryHitDescriptor, shift);
 	return new ResultSet(resultSetArray).getListIterator();
     }
@@ -137,7 +146,15 @@ public class TCPQueryHitDescriptor
     public byte[] getServentIdentifier()
     {
 	byte [] serventIdentifier = new byte[17];
+	int shift = this.queryHitDescriptor.length-17;
 	ArrayManipulator.copyArray(serventIdentifier, this.queryHitDescriptor, shift);
 	return serventIdentifier;
-    }
+    }    
+    
+    /**
+     * Returns this descriptor as a byte array, in little endian format.
+     * @return the converted QueryHit descriptor.
+     */
+    public byte [] getTCPQueryHitDescriptor()
+    { return this.queryHitDescriptor; }
 }
