@@ -8,21 +8,33 @@ import parser.TCPDescriptorHeader;
 import parser.TCPPongDescriptor;
 import parser.PayloadDescriptor;
 import utils.NetworkUtils;
+import configuration.Setup;
 
 /**
  * This class processes all the queries directly linked to network queries, like
  * GNUTELLA CONNECT, PING.
  * In B2MB, there are two distinct clients:
- * the ones that ask to download a animated picture
- * the one that processes queries(GNUTELLA CONNECT, PING) sent by other peers.
+ * - the ones that ask to download a animated picture
+ * - the one that processes queries(GNUTELLA CONNECT, PING) sent by other peers.
  */
 public class ClientSystemNetworkPerformer implements NetworkQueryListener
 {
+    private Setup conf;
+    
+    
     private boolean ok;
     public void setOK(boolean val)
     { ok=val; }
     public boolean getOK()
     { return ok; }
+    
+    
+    /**
+     * The constructor of this object.
+     */
+    public ClientSystemNetworkPerformer(Setup conf)
+    { this.conf = conf; }
+    
     
     /**
      * Sends a PONG after receiving one, if the server is currently able to process the demand.
@@ -30,10 +42,12 @@ public class ClientSystemNetworkPerformer implements NetworkQueryListener
      */
     private void sendAPong(byte [] query, Socket socket) throws IOException
     {
+	if(TCPDescriptorHeader.getTtl(query) == 0) return; //It's time to leave for the query...
 	TCPPongDescriptor pong = new TCPPongDescriptor(TCPDescriptorHeader.getDescriptorID(query),
 						       (byte)(TCPDescriptorHeader.getTtl(query)-1),
 						       (byte)(TCPDescriptorHeader.getHops(query)+1),
-   						       (short)8080, InetAddress.getLocalHost().getAddress(),
+   						       (short)this.conf.getPort(),
+						       InetAddress.getLocalHost().getAddress(),
 						       0, 0);
 	NetworkUtils.write(socket, pong.getTCPPongDescriptor());
 	ok=true;

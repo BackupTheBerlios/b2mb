@@ -2,6 +2,7 @@ package network;
 
 import java.net.ServerSocket;
 import java.io.IOException;
+import configuration.Setup;
 
 /**
  * This class manages all the deeds of a server. It's behaviour is dictated
@@ -10,7 +11,7 @@ import java.io.IOException;
  */
 public class Server
 {
-    private int conf; /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
+    private Setup conf;
     private Thread [] server_threads;
     
     
@@ -23,15 +24,15 @@ public class Server
      * @param performer: An object that implements the ServerPerformerInterface interface. The
      * latter dictates the behaviour of the server.
      */
-    public Server(int conf, ServerPerformerInterface performer) /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
+    public Server(Setup conf, ServerPerformerInterface performer)
 	throws IOException
     {
 	/* initialisation */
-	this.conf           = conf; /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
-	this.server_threads = new Thread[conf]; /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
+	this.conf           = conf;
+	this.server_threads = new Thread[this.conf.getNbProcessus()];
 	
 	/* creation of the thread array */
-	Runnable r = new ServerRunnable(conf, 8080, performer);
+	Runnable r = new ServerRunnable(this.conf.getPort(), performer);
 	for(int i=0; i<this.server_threads.length; i++)
 	    this.server_threads[i]=new Thread(r);
     }

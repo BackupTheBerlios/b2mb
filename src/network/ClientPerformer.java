@@ -27,7 +27,7 @@ public class ClientPerformer implements ClientPerformerInterface
 	    System.out.println("Le client écoute...");
 	    byte [] array = NetworkUtils.read(socket);
 	    
-	    System.out.println("Le client a reçu quelque chose et vérifie..."+array.length);
+	    System.out.println("Le client a reçu quelque chose et vérifie...");
 	    byte [] descriptorId2 = TCPDescriptorHeader.getDescriptorID(array);
 	    boolean cbon = true;
 	    for(int i=0; i<descriptorId2.length; i++)

@@ -1,5 +1,7 @@
 package network;
 
+import configuration.Setup;
+
 /**
  * <p>This class represents a client in a client-server architecture.
  * It simply initiates an array of thread that is activated by the
@@ -12,7 +14,7 @@ public class Client
 {
     private Thread  [] clients; //Contains all the client-threads
     private boolean [] free_clients; //Tells which clients are free
-    private int        conf; //Contains all the parameters of the application
+    private Setup      conf; //Contains all the parameters of the application
     
     
     
@@ -22,10 +24,10 @@ public class Client
      * by the call to startClient(). Otherwise, no thread will be started.
      * @param conf The object that contains the configuration of the application.
      */
-    public Client(int conf)
+    public Client(Setup conf)
     {
 	this.conf    = conf;
-	this.clients = new Thread[this.conf];
+	this.clients = new Thread[this.conf.getNbProcessus()];
 	initialiseFreeClients();
     }
     
@@ -34,7 +36,7 @@ public class Client
      */
     private void initialiseFreeClients()
     {
-	this.free_clients = new boolean[this.conf];
+	this.free_clients = new boolean[this.conf.getNbProcessus()];
 	for(int i=0; i<this.free_clients.length; i++)
 	    this.free_clients[i] = true;
     }    
@@ -75,7 +77,7 @@ public class Client
 	if(i==this.free_clients.length)	return -1;
 	
 	//initialise the client's property
-	Runnable r = new ClientRunnable(this.conf, performer, host, port);	
+	Runnable r = new ClientRunnable(performer, host, port);	
 	this.clients[i] = new Thread(r);
 	
 	//the client starts his activity

@@ -32,15 +32,13 @@ public class TCPPingDescriptor
      * @return the descriptor header
      */
     public TCPPingDescriptor(byte [] descriptorID,
-			     byte payloadDescriptor,
-			     byte ttl, byte hops,
-			     int payloadLength)
+			     byte ttl, byte hops)
     {
 	this.pingDescriptor = 
 	    TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID,
-							  payloadDescriptor,
+							  PayloadDescriptor.PING,
 							  ttl, hops,
-							  payloadLength);
+							  0);
     }
     
     public byte[] getPingDescriptor()

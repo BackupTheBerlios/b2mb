@@ -1,4 +1,4 @@
-//package configuration;
+package configuration;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,7 +18,7 @@ public class Setup{
      * @author B2MB
      * Creates a configuration object
      */
-    Setup(String fileName) throws IOException, FileNotFoundException{
+    public Setup(String fileName) throws IOException, FileNotFoundException{
 	file = fileName;
 
 	load();
@@ -41,7 +41,7 @@ public class Setup{
 	in.close();
     }
 
-     /**
+    /**
      * @author B2MB
      * save all the elements in a file
      */
@@ -62,7 +62,7 @@ public class Setup{
 	return prop.getProperty("path");
     }
 
-     /**
+    /**
      * Permit to get the number of processus used by the application
      * @author B2MB
      * @return number 
@@ -71,7 +71,7 @@ public class Setup{
 	return Integer.parseInt(prop.getProperty("nb_processus"));
     }
 
-     /**
+    /**
      * Permit to get the number of clients authorized by the application
      * @author B2MB
      * @return number 
@@ -80,7 +80,25 @@ public class Setup{
 	return Integer.parseInt(prop.getProperty("nb_clients"));
     }
     
+    /**
+     * Permit to get the available port.
+     * @author B2MB
+     * @return the port
+     */
+    public int getPort(){
+	return Integer.parseInt(prop.getProperty("port"));
+    }
+    
     /****************************************************************************/
+    /**
+     * Permit to set the available port
+     * @author B2MB
+     * @param port
+     */
+    public void setPort(int port){
+	prop.setProperty("port", String.valueOf(port));
+    }
+    
     /**
      * Permit to set the path of the shared files
      * @author B2MB
@@ -90,7 +108,7 @@ public class Setup{
 	prop.setProperty("path", path);
     }
 
-     /**
+    /**
      * Permit to set the number of processus used by the application
      * @author B2MB
      * @param value 
@@ -99,7 +117,7 @@ public class Setup{
 	prop.setProperty("nb_processus", String.valueOf(value));
     }
 
-     /**
+    /**
      * Permit to set the number of clients authorized by the application
      * @author B2MB
      * @param value 

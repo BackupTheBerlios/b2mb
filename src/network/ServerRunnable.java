@@ -11,17 +11,14 @@ import java.io.IOException;
  */
 public class ServerRunnable implements Runnable
 {
-    private int conf;
     private ServerPerformerInterface performer;
     private ServerSocket server_socket;
     
-    public ServerRunnable(int conf, int port, ServerPerformerInterface performer) 
-	/* TEMPORARY: _______| :TO BE REPLACED BY A CONFIGURATION OBJECT */
+    public ServerRunnable(int port, ServerPerformerInterface performer) 
 	throws IOException
     {
-	this.conf      = conf;
 	this.performer = performer;
-	server_socket  = new ServerSocket(port); /* TEMPORARY: TO BE REPLACED BY A CONFIGURATION OBJECT */
+	server_socket  = new ServerSocket(port);
     }
     
     
@@ -37,7 +34,7 @@ public class ServerRunnable implements Runnable
 	    }//...try
 	    catch(IOException ioe){ ioe.printStackTrace(); }
 	    finally{
-		try{ socket.close(); System.out.println("La connexion a ete fermee."+System.currentTimeMillis()); }
+		try{ socket.close(); System.out.println("La connexion a ete fermee."); }
 		catch(IOException ioe){ ioe.printStackTrace(); }
 	    }
 	}//...while

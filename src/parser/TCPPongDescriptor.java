@@ -1,7 +1,5 @@
 package parser;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import utils.ArrayManipulator;
 
 /**
@@ -40,15 +38,14 @@ public class TCPPongDescriptor
      * @return the descriptor header
      */
     public TCPPongDescriptor(byte [] descriptorID,
-			     byte payloadDescriptor,
 			     byte ttl, byte hops,
 			     
 			     short port, byte [] ipAddress,
 			     int nbSharedFiles, int nbSharedKo)
     {
 	int shift = TCPDescriptorHeader.getHeaderLength();
-	this.pongDescriptor = TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID,
-									    payloadDescriptor,
+	this.pongDescriptor = TCPDescriptorHeader.createTCPDescriptorHeader(descriptorID, 
+									    PayloadDescriptor.PONG,
 									    ttl, hops,14);
 	byte [] array = ArrayManipulator.short2ByteArray(port);
 	ArrayManipulator.copyArray(this.pongDescriptor, array, shift);

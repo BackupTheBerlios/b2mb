@@ -7,13 +7,11 @@ import java.io.IOException;
 public class ClientRunnable implements Runnable
 {
     private ClientPerformerInterface performer;
-    private int conf;
     private int port;
     private String host;
     
-    public ClientRunnable(int conf, ClientPerformerInterface performer, String host, int port)
+    public ClientRunnable(ClientPerformerInterface performer, String host, int port)
     {
-	this.conf      = conf;
 	this.performer = performer;
 	this.port      = port;
 	this.host      = host;
